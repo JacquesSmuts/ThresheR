@@ -19,9 +19,20 @@ public class SplashActivity extends AppCompatActivity {
         doAuthCheck();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // The user could have pressed the back button before authorizing our app, make sure we have
+        // an authenticated user before starting the UserOverviewActivity.
+        if (requestCode == REQ_CODE_LOGIN && resultCode == RESULT_OK) {
+            goToHomeActivity();
+        }
+    }
+
     private void doAuthCheck(){
-        boolean hasNoTokens = ThresherApp.getTokenStore().size() == 0;
-        if (hasNoTokens){
+        //check if there is at least one user token. For now, only one user per app install
+        if (ThresherApp.getTokenStore().size() > 0){
+            goToHomeActivity();
+        } else {
             getUserAuth();
         }
     }
@@ -30,12 +41,8 @@ public class SplashActivity extends AppCompatActivity {
         startActivityForResult(new Intent(this, NewUserActivity.class), REQ_CODE_LOGIN);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // The user could have pressed the back button before authorizing our app, make sure we have
-        // an authenticated user before starting the UserOverviewActivity.
-        if (requestCode == REQ_CODE_LOGIN && resultCode == RESULT_OK) {
-            //TODO: startActivity(new Intent(this, UserOverviewActivity.class));
-        }
+    private void goToHomeActivity(){
+        startActivity(new Intent (this, SubmissionListActivity.class));
     }
+
 }
