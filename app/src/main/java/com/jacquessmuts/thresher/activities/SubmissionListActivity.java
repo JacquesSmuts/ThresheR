@@ -24,6 +24,7 @@ import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
+import net.dean.jraw.oauth.OAuthHelper;
 import net.dean.jraw.pagination.DefaultPaginator;
 
 import java.util.List;
