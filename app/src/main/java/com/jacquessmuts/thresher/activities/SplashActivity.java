@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
         // The user could have pressed the back button before authorizing our app, make sure we have
         // an authenticated user before starting the UserOverviewActivity.
         if (requestCode == REQ_CODE_LOGIN && resultCode == RESULT_OK) {
-            goToHomeActivity();
+            goToMainActivity();
         }
     }
 
@@ -52,8 +52,8 @@ public class SplashActivity extends AppCompatActivity {
         startActivityForResult(new Intent(this, NewUserActivity.class), REQ_CODE_LOGIN);
     }
 
-    private void goToHomeActivity(){
-        startActivity(new Intent(this, UserOverviewActivity.class));
+    private void goToMainActivity(){
+        startActivity(new Intent(this, SubmissionListActivity.class));
         //startActivity(new Intent (this, SubmissionListActivity.class));
     }
 
@@ -75,7 +75,8 @@ public class SplashActivity extends AppCompatActivity {
             Activity activity = this.activity.get();
 
             if (activity != null) {
-                activity.startActivity(new Intent(activity, UserOverviewActivity.class));
+                activity.startActivity(new Intent(activity, SubmissionListActivity.class));
+                //activity.startActivity(new Intent(activity, UserOverviewActivity.class));
             }
         }
     }
