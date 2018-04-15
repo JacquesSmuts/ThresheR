@@ -77,13 +77,13 @@ public class SubmissionListActivity extends AppCompatActivity {
 
         View recyclerView = findViewById(R.id.submission_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        setupRecyclerView((RecyclerView) recyclerView, null);
 
         getFrontPage();
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane));
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, Listing<Submission> submissions) {
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, submissions, mTwoPane));
     }
 
     private void getFrontPage(){
@@ -91,14 +91,15 @@ public class SubmissionListActivity extends AppCompatActivity {
     }
 
     private void updatePage(Listing<Submission> submissions){
-
+        View recyclerView = findViewById(R.id.submission_list);
+        setupRecyclerView((RecyclerView) recyclerView, submissions);
     }
 
     public static class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final SubmissionListActivity mParentActivity;
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<Submission> mValues;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
@@ -123,7 +124,7 @@ public class SubmissionListActivity extends AppCompatActivity {
         };
 
         SimpleItemRecyclerViewAdapter(SubmissionListActivity parent,
-                                      List<DummyContent.DummyItem> items,
+                                      List<Submission> items,
                                       boolean twoPane) {
             mValues = items;
             mParentActivity = parent;
@@ -139,8 +140,8 @@ public class SubmissionListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mIdView.setText(mValues.get(position).getTitle());
+            holder.mContentView.setText(mValues.get(position).getSelfText());
 
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
@@ -148,7 +149,11 @@ public class SubmissionListActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mValues.size();
+            int count = 0;
+            if (mValues != null){
+                count = mValues.size();
+            }
+            return count;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
