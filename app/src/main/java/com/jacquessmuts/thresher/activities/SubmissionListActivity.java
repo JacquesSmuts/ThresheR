@@ -1,8 +1,5 @@
 package com.jacquessmuts.thresher.activities;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,27 +8,21 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
 
+import com.jacquessmuts.thresher.SubmissionRecyclerViewAdapter;
 import com.jacquessmuts.thresher.ThresherApp;
-import com.jacquessmuts.thresher.activities.dummy.DummyContent;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
-import net.dean.jraw.oauth.OAuthHelper;
 import net.dean.jraw.pagination.DefaultPaginator;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An activity representing a list of Submissions. This activity
@@ -83,7 +74,7 @@ public class SubmissionListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, Listing<Submission> submissions) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, submissions, mTwoPane));
+        recyclerView.setAdapter(new SubmissionRecyclerViewAdapter(this, submissions));
     }
 
     private void getFrontPage(){
@@ -93,79 +84,6 @@ public class SubmissionListActivity extends AppCompatActivity {
     private void updatePage(Listing<Submission> submissions){
         View recyclerView = findViewById(R.id.submission_list);
         setupRecyclerView((RecyclerView) recyclerView, submissions);
-    }
-
-    public static class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private final SubmissionListActivity mParentActivity;
-        private final List<Submission> mValues;
-        private final boolean mTwoPane;
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putString(SubmissionDetailFragment.ARG_ITEM_ID, item.id);
-                    SubmissionDetailFragment fragment = new SubmissionDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.submission_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, SubmissionDetailActivity.class);
-                    intent.putExtra(SubmissionDetailFragment.ARG_ITEM_ID, item.id);
-
-                    context.startActivity(intent);
-                }
-            }
-        };
-
-        SimpleItemRecyclerViewAdapter(SubmissionListActivity parent,
-                                      List<Submission> items,
-                                      boolean twoPane) {
-            mValues = items;
-            mParentActivity = parent;
-            mTwoPane = twoPane;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.submission_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).getTitle());
-            holder.mContentView.setText(mValues.get(position).getSelfText());
-
-            holder.itemView.setTag(mValues.get(position));
-            holder.itemView.setOnClickListener(mOnClickListener);
-        }
-
-        @Override
-        public int getItemCount() {
-            int count = 0;
-            if (mValues != null){
-                count = mValues.size();
-            }
-            return count;
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mIdView;
-            final TextView mContentView;
-
-            ViewHolder(View view) {
-                super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
-            }
-        }
     }
 
     private static class DownloadPageTask extends AsyncTask<String, Listing<Submission>, Listing<Submission>> {
