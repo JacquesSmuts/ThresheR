@@ -6,8 +6,6 @@
     android:name="com.jacquessmuts.thresher.activities.SubmissionListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context=".activities.SubmissionListActivity"
-    tools:listitem="@layout/submission_list_content" />
+    tools:listitem="@layout/viewholder_submission_list" />

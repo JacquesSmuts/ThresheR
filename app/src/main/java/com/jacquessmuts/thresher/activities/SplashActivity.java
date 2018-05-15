@@ -39,7 +39,6 @@ public class SplashActivity extends AppCompatActivity {
     private void doAuthCheck(){
         //check if there is at least one user token. For now, only one user per app install
         if (ThresherApp.getTokenStore().size() > 0){
-
             TreeMap<String, PersistedAuthData> data = new TreeMap<>(ThresherApp.getTokenStore().data());
             ArrayList<String> usernames = new ArrayList<>(data.keySet());
             new ReauthenticationTask(new WeakReference<>(this)).execute(usernames.get(0));

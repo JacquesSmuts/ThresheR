@@ -28,7 +28,7 @@
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="com.jacquessmuts.thresher.activities.SubmissionListActivity"
-        tools:listitem="@layout/submission_list_content" />
+        tools:listitem="@layout/viewholder_submission_list" />
 
     <FrameLayout
         android:id="@+id/submission_detail_container"
