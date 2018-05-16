@@ -65,7 +65,6 @@ public class SubmissionRecyclerViewAdapter
             holder.imagePreview.setVisibility(View.VISIBLE);
         }
 
-
         holder.textTitle.setText(submission.getTitle());
         holder.textScore.setText(String.valueOf(submission.getScore()));
 
