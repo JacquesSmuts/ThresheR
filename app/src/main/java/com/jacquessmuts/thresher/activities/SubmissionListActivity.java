@@ -8,12 +8,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 
 import com.jacquessmuts.thresher.R;
 
 import com.jacquessmuts.thresher.SubmissionRecyclerViewAdapter;
 import com.jacquessmuts.thresher.ThresherApp;
+import com.jacquessmuts.thresher.eventbusses.SubmissionSelectedBus;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Listing;
@@ -23,6 +25,10 @@ import net.dean.jraw.models.TimePeriod;
 import net.dean.jraw.pagination.DefaultPaginator;
 
 import java.lang.ref.WeakReference;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
 
 /**
  * An activity representing a list of Submissions. This activity
@@ -39,6 +45,9 @@ public class SubmissionListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    public static final String LOG_TAG = SubmissionListActivity.class.getSimpleName();
+
+    public CompositeDisposable eventDisposables = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +80,37 @@ public class SubmissionListActivity extends AppCompatActivity {
         setupRecyclerView((RecyclerView) recyclerView, null);
 
         getFrontPage();
+
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        eventDisposables.clear();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        eventDisposables.add(SubmissionSelectedBus.getInstance().listen()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<Submission>() {
+                    @Override
+                    public void onNext(Submission submission) {
+                        Log.i(LOG_TAG, "clicked on item " + submission.toString());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                }));
+
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, Listing<Submission> submissions) {

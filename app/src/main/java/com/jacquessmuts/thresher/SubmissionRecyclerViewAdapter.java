@@ -13,6 +13,7 @@ import com.jacquessmuts.thresher.activities.SubmissionDetailActivity;
 import com.jacquessmuts.thresher.activities.SubmissionDetailFragment;
 import com.jacquessmuts.thresher.activities.SubmissionListActivity;
 import com.jacquessmuts.thresher.activities.dummy.DummyContent;
+import com.jacquessmuts.thresher.eventbusses.SubmissionSelectedBus;
 import com.squareup.picasso.Picasso;
 
 import net.dean.jraw.models.Submission;
@@ -29,14 +30,6 @@ public class SubmissionRecyclerViewAdapter
 
     private final SubmissionListActivity parentActivity;
     private final List<Submission> submissions;
-
-    private final View.OnClickListener onClickListener = view -> {
-        DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
-        Context context = view.getContext();
-        Intent intent = new Intent(context, SubmissionDetailActivity.class);
-        intent.putExtra(SubmissionDetailFragment.ARG_ITEM_ID, item.id);
-        context.startActivity(intent);
-    };
 
     public SubmissionRecyclerViewAdapter(SubmissionListActivity parent,
                                          List<Submission> items) {
@@ -69,7 +62,9 @@ public class SubmissionRecyclerViewAdapter
         holder.textScore.setText(String.valueOf(submission.getScore()));
 
         holder.itemView.setTag(submissions.get(position));
-        holder.itemView.setOnClickListener(onClickListener);
+        holder.itemView.setOnClickListener(v -> {
+            SubmissionSelectedBus.getInstance().onNext(submissions.get(position));
+        });
     }
 
     @Override
