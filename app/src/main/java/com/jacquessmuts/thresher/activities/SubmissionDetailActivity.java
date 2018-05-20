@@ -1,5 +1,6 @@
 package com.jacquessmuts.thresher.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +12,9 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import com.jacquessmuts.thresher.R;
+import com.jacquessmuts.thresher.utilities.GenericUtils;
+
+import net.dean.jraw.models.Submission;
 
 /**
  * An activity representing a single Submission detail screen. This
@@ -19,6 +23,16 @@ import com.jacquessmuts.thresher.R;
  * in a {@link SubmissionListActivity}.
  */
 public class SubmissionDetailActivity extends AppCompatActivity {
+
+    public static final String KEY_SUBMISSION = "submission";
+
+    private Submission submission;
+
+    public static Intent getIntent(Context context, Submission submission){
+        Intent intent = new Intent (context, SubmissionDetailActivity.class);
+        intent.putExtra(KEY_SUBMISSION, GenericUtils.serializeSubmission(submission));
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +54,11 @@ public class SubmissionDetailActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            submission = GenericUtils.deserializeSubmission(intent.getStringExtra(KEY_SUBMISSION));
         }
 
         // savedInstanceState is non-null when there is fragment state
