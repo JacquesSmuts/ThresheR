@@ -46,6 +46,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jacquessmuts.thresher.activities.SubmissionListActivity" />
         </activity>
+
+        <provider
+            android:name=".database.RedditProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"/>
     </application>
 
 </manifest>
