@@ -7,5 +7,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".activities.SubmissionListActivity"
+    tools:context=".activities.RedditPostListActivity"
     tools:listitem="@layout/viewholder_submission_list" />

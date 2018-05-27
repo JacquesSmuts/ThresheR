@@ -1,8 +1,8 @@
 package com.jacquessmuts.thresher.activities;
 
 import android.app.Activity;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +14,8 @@ import com.jacquessmuts.thresher.activities.dummy.DummyContent;
 
 /**
  * A fragment representing a single Submission detail screen.
- * This fragment is either contained in a {@link SubmissionListActivity}
- * in two-pane mode (on tablets) or a {@link SubmissionDetailActivity}
+ * This fragment is either contained in a {@link RedditPostListActivity}
+ * in two-pane mode (on tablets) or a {@link RedditPostDetailActivity}
  * on handsets.
  */
 public class SubmissionDetailFragment extends Fragment {

@@ -5,32 +5,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.jacquessmuts.thresher.R;
-import com.jacquessmuts.thresher.utilities.GenericUtils;
-
-import net.dean.jraw.models.Submission;
+import com.jacquessmuts.thresher.models.RedditPost;
 
 /**
  * An activity representing a single Submission detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a {@link SubmissionListActivity}.
+ * in a {@link RedditPostListActivity}.
  */
-public class SubmissionDetailActivity extends AppCompatActivity {
+public class RedditPostDetailActivity extends AppCompatActivity {
 
-    public static final String KEY_SUBMISSION = "submission";
+    public static final String KEY_REDDIT_POST = "reddit_post";
 
-    private Submission submission;
+    private RedditPost redditPost;
 
-    public static Intent getIntent(Context context, Submission submission){
-        Intent intent = new Intent (context, SubmissionDetailActivity.class);
-        intent.putExtra(KEY_SUBMISSION, GenericUtils.serializeSubmission(submission));
+    public static Intent getIntent(Context context, RedditPost redditPost){
+        Intent intent = new Intent (context, RedditPostDetailActivity.class);
+        //intent.putExtra(KEY_REDDIT_POST, GenericUtils.serializeSubmission(redditPost));
+        intent.putExtra(KEY_REDDIT_POST, redditPost);
         return intent;
     }
 
@@ -58,7 +57,8 @@ public class SubmissionDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            submission = GenericUtils.deserializeSubmission(intent.getStringExtra(KEY_SUBMISSION));
+            //submission = GenericUtils.deserializeSubmission(intent.getStringExtra(KEY_REDDIT_POST));
+            redditPost = intent.getParcelableExtra(KEY_REDDIT_POST);
         }
 
         // savedInstanceState is non-null when there is fragment state
@@ -94,7 +94,7 @@ public class SubmissionDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            navigateUpTo(new Intent(this, SubmissionListActivity.class));
+            navigateUpTo(new Intent(this, RedditPostListActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

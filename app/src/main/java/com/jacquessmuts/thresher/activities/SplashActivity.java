@@ -3,8 +3,8 @@ package com.jacquessmuts.thresher.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.ThresherApp;
@@ -52,8 +52,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity(){
-        startActivity(new Intent(this, SubmissionListActivity.class));
-        //startActivity(new Intent (this, SubmissionListActivity.class));
+        startActivity(new Intent(this, RedditPostListActivity.class));
+        //startActivity(new Intent (this, RedditPostListActivity.class));
     }
 
     private static class ReauthenticationTask extends AsyncTask<String, Void, Void> {
@@ -74,7 +74,7 @@ public class SplashActivity extends AppCompatActivity {
             Activity activity = this.activity.get();
 
             if (activity != null) {
-                activity.startActivity(new Intent(activity, SubmissionListActivity.class));
+                activity.startActivity(new Intent(activity, RedditPostListActivity.class));
                 //activity.startActivity(new Intent(activity, UserOverviewActivity.class));
             }
         }

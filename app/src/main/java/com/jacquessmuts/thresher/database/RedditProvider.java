@@ -95,7 +95,7 @@ public class RedditProvider extends ContentProvider {
                 int rowsInserted = 0;
                 try {
                     for (ContentValues value : values) {
-                        long _id = db.insert(RedditContract.SubmissionEntry.TABLE_NAME, null, value);
+                        long _id = db.insert(RedditContract.RedditPostsEntry.TABLE_NAME, null, value);
                         if (_id != -1) {
                             rowsInserted++;
                         }
@@ -143,64 +143,6 @@ public class RedditProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
 
             /*
-             * When uriMatcher's match method is called with a URI that looks something like this
-             *
-             *      content://com.example.android.sunshine/weather/1472214172
-             *
-             * uriMatcher's match method will return the code that indicates to us that we need
-             * to return the weather for a particular date. The date in this code is encoded in
-             * milliseconds and is at the very end of the URI (1472214172) and can be accessed
-             * programmatically using Uri's getLastPathSegment method.
-             *
-             * In this case, we want to return a cursor that contains one row of weather data for
-             * a particular date.
-             */
-//            case CODE_WEATHER_WITH_DATE: {
-//
-//                /*
-//                 * In order to determine the date associated with this URI, we look at the last
-//                 * path segment. In the comment above, the last path segment is 1472214172 and
-//                 * represents the number of seconds since the epoch, or UTC time.
-//                 */
-//                String normalizedUtcDateString = uri.getLastPathSegment();
-//
-//                /*
-//                 * The query method accepts a string array of arguments, as there may be more
-//                 * than one "?" in the selection statement. Even though in our case, we only have
-//                 * one "?", we have to create a string array that only contains one element
-//                 * because this method signature accepts a string array.
-//                 */
-//                String[] selectionArguments = new String[]{normalizedUtcDateString};
-//
-//                cursor = openHelper.getReadableDatabase().query(
-//                        /* Table we are going to query */
-//                        RedditContract.SubmissionEntry.TABLE_NAME,
-//                        /*
-//                         * A projection designates the columns we want returned in our Cursor.
-//                         * Passing null will return all columns of data within the Cursor.
-//                         * However, if you don't need all the data from the table, it's best
-//                         * practice to limit the columns returned in the Cursor with a projection.
-//                         */
-//                        projection,
-//                        /*
-//                         * The URI that matches CODE_WEATHER_WITH_DATE contains a date at the end
-//                         * of it. We extract that date and use it with these next two lines to
-//                         * specify the row of weather we want returned in the cursor. We use a
-//                         * question mark here and then designate selectionArguments as the next
-//                         * argument for performance reasons. Whatever Strings are contained
-//                         * within the selectionArguments array will be inserted into the
-//                         * selection statement by SQLite under the hood.
-//                         */
-//                        RedditContract.SubmissionEntry.COLUMN_DATE + " = ? ",
-//                        selectionArguments,
-//                        null,
-//                        null,
-//                        sortOrder);
-//
-//                break;
-//            }
-
-            /*
              * When uriMatcher's match method is called with a URI that looks EXACTLY like this
              *
              *      content://com.jacques.thresher/submission/
@@ -213,7 +155,7 @@ public class RedditProvider extends ContentProvider {
              */
             case CODE_SUBMISSION: {
                 cursor = openHelper.getReadableDatabase().query(
-                        RedditContract.SubmissionEntry.TABLE_NAME,
+                        RedditContract.RedditPostsEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -259,7 +201,7 @@ public class RedditProvider extends ContentProvider {
 
             case CODE_SUBMISSION:
                 numRowsDeleted = openHelper.getWritableDatabase().delete(
-                        RedditContract.SubmissionEntry.TABLE_NAME,
+                        RedditContract.RedditPostsEntry.TABLE_NAME,
                         selection,
                         selectionArgs);
 
@@ -307,7 +249,7 @@ public class RedditProvider extends ContentProvider {
                 db.beginTransaction();
                 try {
                     id = db.insertWithOnConflict(
-                            RedditContract.SubmissionEntry.TABLE_NAME,
+                            RedditContract.RedditPostsEntry.TABLE_NAME,
                             null,
                             values,
                             SQLiteDatabase.CONFLICT_REPLACE);
@@ -330,14 +272,14 @@ public class RedditProvider extends ContentProvider {
         if (id > 0) {
             return ContentUris.withAppendedId(uri, id);
         }
-        // s.th. went wrong:
         throw new SQLException(
                 "Problem while inserting into uri: " + uri);
     }
 
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        throw new RuntimeException("We are not implementing update in Sunshine");
+        //TODO: implement update database
+        throw new RuntimeException("Update is not implemented yet");
     }
 
     /**

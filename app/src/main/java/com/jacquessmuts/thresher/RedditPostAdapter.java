@@ -1,0 +1,117 @@
+package com.jacquessmuts.thresher;
+
+import android.database.Cursor;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.jacquessmuts.thresher.activities.RedditPostListActivity;
+import com.jacquessmuts.thresher.database.DbHelper;
+import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
+import com.jacquessmuts.thresher.models.RedditPost;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+/**
+ * Created by Jacques Smuts on 4/21/2018.
+ * This is the main recyclerview, which handles the list of reddit posts, aka redditPosts
+ */
+
+public class RedditPostAdapter
+        extends RecyclerView.Adapter<RedditPostAdapter.ViewHolder> {
+
+    private final RedditPostListActivity parentActivity;
+    private final List<RedditPost> redditPosts;
+
+    private Cursor cursor;
+
+    public RedditPostAdapter(RedditPostListActivity parent,
+                             List<RedditPost> items) {
+        redditPosts = items;
+        parentActivity = parent;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.viewholder_submission_list, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+
+
+        RedditPost redditPost = null;
+
+        if (cursor != null && cursor.getCount() > position){
+            cursor.moveToPosition(position);
+            //TODO: show correct data from cursor instead of submission
+
+            redditPost = new RedditPost();
+            redditPost.setThumbnail(cursor.getString(DbHelper.INDEX_THUMBNAIL_PATH));
+            redditPost.setTitle(cursor.getString(DbHelper.INDEX_TITLE));
+        }
+        else if (redditPosts != null && redditPosts.size() >= position) {
+            redditPost = redditPosts.get(position);
+        }
+
+        if (redditPost == null) return;
+
+        String thumbnailPath = redditPost.getThumbnail();
+        if (thumbnailPath == null || thumbnailPath.isEmpty() || thumbnailPath.equals("default")) {
+            holder.imagePreview.setVisibility(View.GONE);
+        } else {
+            Picasso.with(parentActivity).load(thumbnailPath).into(holder.imagePreview);
+            holder.imagePreview.setVisibility(View.VISIBLE);
+        }
+
+        holder.textTitle.setText(redditPost.getTitle());
+        holder.textScore.setText(String.valueOf(redditPost.getScore()));
+
+
+        holder.itemView.setTag(redditPost);
+        RedditPost finalRedditPost = redditPost;
+        holder.itemView.setOnClickListener(v -> {
+            RedditPostSelectedBus.getInstance().onNext(finalRedditPost);
+        });
+
+    }
+
+    @Override
+    public int getItemCount() {
+        int count = 0;
+        if (cursor != null && cursor.getCount() > 0){
+            count = cursor.getCount();
+        } else if (redditPosts != null){
+            count = redditPosts.size();
+        }
+        return count;
+    }
+
+    public void swapCursor(Cursor newCursor) {
+        cursor = newCursor;
+        notifyDataSetChanged();
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final ImageView imagePreview;
+        final TextView textTitle;
+        final TextView textScore;
+        final TextView textInfo;
+        //TODO: add upvote/downvote buttons
+
+        ViewHolder(View view) {
+            super(view);
+            imagePreview = view.findViewById(R.id.image_main);
+            textTitle = view.findViewById(R.id.text_title);
+            textScore = view.findViewById(R.id.text_score);
+            textInfo = view.findViewById(R.id.text_info);
+        }
+    }
+}
+

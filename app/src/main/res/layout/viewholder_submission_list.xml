@@ -11,7 +11,7 @@
     app:cardCornerRadius="4dp">
 
     <android.support.constraint.ConstraintLayout
-        tools:context=".activities.SubmissionListActivity"
+        tools:context=".activities.RedditPostListActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white">

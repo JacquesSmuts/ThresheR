@@ -31,20 +31,20 @@
         </activity>
         <activity android:name=".activities.NewUserActivity" />
         <activity
-            android:name=".activities.SubmissionListActivity"
+            android:name=".activities.RedditPostListActivity"
             android:label="@string/title_submission_list"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activities.UserOverviewActivity"
             android:label="User Overview"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".activities.SubmissionDetailActivity"
+            android:name=".activities.RedditPostDetailActivity"
             android:label="@string/title_submission_detail"
-            android:parentActivityName=".activities.SubmissionListActivity"
+            android:parentActivityName=".activities.RedditPostListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.jacquessmuts.thresher.activities.SubmissionListActivity" />
+                android:value="com.jacquessmuts.thresher.activities.RedditPostListActivity" />
         </activity>
 
         <provider

@@ -17,6 +17,29 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
 
+    //ID for a loader
+    public static final int ID_SUBMISSIONS_LOADER = 42;
+
+    /*
+     * The columns of data that we are interested in displaying within the list
+     */
+    public static final String[] MAIN_SUBMISSIONS_PROJECTION = {
+            RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID,
+            RedditContract.RedditPostsEntry.COLUMN_TITLE,
+            RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL,
+            RedditContract.RedditPostsEntry.COLUMN_POSTER_PATH,
+            RedditContract.RedditPostsEntry.COLUMN_IS_FAVORITE,
+            RedditContract.RedditPostsEntry.COLUMN_VOTE_AVERAGE
+    };
+
+
+    public static final int INDEX_SUBMISSION_ID = 0;
+    public static final int INDEX_TITLE = 1;
+    public static final int INDEX_THUMBNAIL_PATH = 2;
+    public static final int INDEX_OVERVIEW = 3;
+    public static final int INDEX_IS_FAVORITE = 4;
+    public static final int INDEX_VOTE_AVERAGE = 5;
+
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -36,28 +59,28 @@ public class DbHelper extends SQLiteOpenHelper {
          */
         final String SQL_CREATE_SUBMISSION_TABLE =
 
-                "CREATE TABLE " + RedditContract.SubmissionEntry.TABLE_NAME + " (" +
+                "CREATE TABLE " + RedditContract.RedditPostsEntry.TABLE_NAME + " (" +
 
                         /*
-                         * SubmissionEntry did not explicitly declare a column called "_ID". However,
-                         * SubmissionEntry implements the interface, "BaseColumns", which does have a field
+                         * RedditPostsEntry did not explicitly declare a column called "_ID". However,
+                         * RedditPostsEntry implements the interface, "BaseColumns", which does have a field
                          * named "_ID". We use that here to designate our table's primary key.
                          */
-                        RedditContract.SubmissionEntry.COLUMN_SUBMISSION_ID + " INTEGER PRIMARY KEY NOT NULL ON CONFLICT REPLACE, "                 +
-//                RedditContract.SubmissionEntry.COLUMN_ORIGINAL_LANGUAGE   + " TEXT, "                    +
-                        RedditContract.SubmissionEntry.COLUMN_ORIGINAL_TITLE   + " TEXT, "                    +
-//                RedditContract.SubmissionEntry.COLUMN_TITLE   + " TEXT, "                    +
-                        RedditContract.SubmissionEntry.COLUMN_OVERVIEW + " TEXT,"                  +
-                        RedditContract.SubmissionEntry.COLUMN_POSTER_PATH   + " TEXT, "                    +
-//                RedditContract.SubmissionEntry.COLUMN_BACKDROP_PATH + " TEXT, "                    +
-                        RedditContract.SubmissionEntry.COLUMN_RELEASE_DATE    + " TEXT," +
-                        RedditContract.SubmissionEntry.COLUMN_POPULARITY + " TEXT,"                  +
-                        RedditContract.SubmissionEntry.COLUMN_VOTE_AVERAGE   + " DOUBLE, "                    +
-//                RedditContract.SubmissionEntry.COLUMN_ADULT + " BOOL, "                    +
-//                RedditContract.SubmissionEntry.COLUMN_VOTE_COUNT    + " INTEGER," +
-//                RedditContract.SubmissionEntry.COLUMN_TRAILERS + " REAL NOT NULL,"                  +
-//                RedditContract.SubmissionEntry.COLUMN_REVIEWS   + " REAL NOT NULL, "                    +
-                        RedditContract.SubmissionEntry.COLUMN_IS_FAVORITE    + " BOOLEAN NOT NULL);";
+                        RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID + " TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE, "                 +
+//                RedditContract.RedditPostsEntry.COLUMN_ORIGINAL_LANGUAGE   + " TEXT, "                    +
+                        RedditContract.RedditPostsEntry.COLUMN_TITLE   + " TEXT, "                    +
+//                RedditContract.RedditPostsEntry.COLUMN_TITLE   + " TEXT, "                    +
+                        RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL + " TEXT,"                  +
+                        RedditContract.RedditPostsEntry.COLUMN_POSTER_PATH   + " TEXT, "                    +
+//                RedditContract.RedditPostsEntry.COLUMN_BACKDROP_PATH + " TEXT, "                    +
+                        RedditContract.RedditPostsEntry.COLUMN_RELEASE_DATE    + " TEXT," +
+                        RedditContract.RedditPostsEntry.COLUMN_POPULARITY + " TEXT,"                  +
+                        RedditContract.RedditPostsEntry.COLUMN_VOTE_AVERAGE   + " DOUBLE, "                    +
+//                RedditContract.RedditPostsEntry.COLUMN_ADULT + " BOOL, "                    +
+//                RedditContract.RedditPostsEntry.COLUMN_VOTE_COUNT    + " INTEGER," +
+//                RedditContract.RedditPostsEntry.COLUMN_TRAILERS + " REAL NOT NULL,"                  +
+//                RedditContract.RedditPostsEntry.COLUMN_REVIEWS   + " REAL NOT NULL, "                    +
+                        RedditContract.RedditPostsEntry.COLUMN_IS_FAVORITE    + " BOOLEAN);";
 
         /*
          * After we've spelled out our SQLite table creation statement above, we actually execute
@@ -81,7 +104,7 @@ public class DbHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + RedditContract.SubmissionEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + RedditContract.RedditPostsEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

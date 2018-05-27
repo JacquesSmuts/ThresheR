@@ -20,7 +20,7 @@ public class RedditContract {
     public static final String PATH_SUBMISSION = "submission";
 
     /* Inner class that defines the table contents of the weather table */
-    public static final class SubmissionEntry implements BaseColumns {
+    public static final class RedditPostsEntry implements BaseColumns {
 
         /* The base CONTENT_URI used to query the Weather table from the content provider */
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
@@ -28,14 +28,14 @@ public class RedditContract {
                 .build();
 
         /* Used internally as the name of our movies table. */
-        public static final String TABLE_NAME = "submissions";
+        public static final String TABLE_NAME = "reddit_posts";
 
-        public static final String COLUMN_SUBMISSION_ID = "submission_id";
+        public static final String COLUMN_REDDIT_POST_ID = "reddit_post_id";
+        public static final String COLUMN_THUMBNAIL = "thumbnail";
+        public static final String COLUMN_TITLE = "title";
         //TODO: rename the columns
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_ORIGINAL_LANGUAGE = "original_language";
-        public static final String COLUMN_ORIGINAL_TITLE = "original_title";
-        public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
         public static final String COLUMN_RELEASE_DATE = "release_date";
@@ -47,12 +47,12 @@ public class RedditContract {
         public static final String COLUMN_REVIEWS = "reviews";
         public static final String COLUMN_IS_FAVORITE = "isFavorite";
 
-        public static String getAllFavorites() {
-            return SubmissionEntry.COLUMN_IS_FAVORITE + " >= 1";
+        public static String getAllSubmissions() {
+            return RedditPostsEntry.COLUMN_REDDIT_POST_ID + " NOT NULL";//" >= 0";
         }
 
-        public static String getSubmisisonById(int id){
-            return SubmissionEntry.COLUMN_SUBMISSION_ID + " = " + id;
+        public static String getRedditPostById(String id){
+            return RedditPostsEntry.COLUMN_REDDIT_POST_ID + " = " + id;
         }
     }
 }

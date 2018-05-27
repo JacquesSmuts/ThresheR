@@ -10,7 +10,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context=".activities.SubmissionListActivity">
+    tools:context=".activities.RedditPostListActivity">
 
     <!--
     This layout is a two-pane layout for the Submissions
@@ -27,7 +27,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.jacquessmuts.thresher.activities.SubmissionListActivity"
+        tools:context="com.jacquessmuts.thresher.activities.RedditPostListActivity"
         tools:listitem="@layout/viewholder_submission_list" />
 
     <FrameLayout
