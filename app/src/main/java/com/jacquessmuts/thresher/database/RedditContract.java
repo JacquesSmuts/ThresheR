@@ -34,17 +34,12 @@ public class RedditContract {
         public static final String COLUMN_THUMBNAIL = "thumbnail";
         public static final String COLUMN_TITLE = "title";
         //TODO: rename the columns
-        public static final String COLUMN_OVERVIEW = "overview";
-        public static final String COLUMN_ORIGINAL_LANGUAGE = "original_language";
-        public static final String COLUMN_POSTER_PATH = "poster_path";
+        public static final String COLUMN_SCORE = "score";
         public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_POPULARITY = "popularity";
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
         public static final String COLUMN_ADULT = "adult";
-        public static final String COLUMN_VOTE_COUNT = "vote_count";
-        public static final String COLUMN_TRAILERS = "trailers";
-        public static final String COLUMN_REVIEWS = "reviews";
         public static final String COLUMN_IS_FAVORITE = "isFavorite";
 
         public static String getAllSubmissions() {

@@ -26,8 +26,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String[] MAIN_SUBMISSIONS_PROJECTION = {
             RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID,
             RedditContract.RedditPostsEntry.COLUMN_TITLE,
+            RedditContract.RedditPostsEntry.COLUMN_SCORE,
             RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL,
-            RedditContract.RedditPostsEntry.COLUMN_POSTER_PATH,
             RedditContract.RedditPostsEntry.COLUMN_IS_FAVORITE,
             RedditContract.RedditPostsEntry.COLUMN_VOTE_AVERAGE
     };
@@ -35,10 +35,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public static final int INDEX_SUBMISSION_ID = 0;
     public static final int INDEX_TITLE = 1;
-    public static final int INDEX_THUMBNAIL_PATH = 2;
-    public static final int INDEX_OVERVIEW = 3;
-    public static final int INDEX_IS_FAVORITE = 4;
-    public static final int INDEX_VOTE_AVERAGE = 5;
+    public static final int INDEX_SCORE = 2;
+    public static final int INDEX_THUMBNAIL_PATH = 3;
+    public static final int INDEX_OVERVIEW = 4;
+    public static final int INDEX_IS_FAVORITE = 5;
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -67,12 +67,9 @@ public class DbHelper extends SQLiteOpenHelper {
                          * named "_ID". We use that here to designate our table's primary key.
                          */
                         RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID + " TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE, "                 +
-//                RedditContract.RedditPostsEntry.COLUMN_ORIGINAL_LANGUAGE   + " TEXT, "                    +
                         RedditContract.RedditPostsEntry.COLUMN_TITLE   + " TEXT, "                    +
-//                RedditContract.RedditPostsEntry.COLUMN_TITLE   + " TEXT, "                    +
                         RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL + " TEXT,"                  +
-                        RedditContract.RedditPostsEntry.COLUMN_POSTER_PATH   + " TEXT, "                    +
-//                RedditContract.RedditPostsEntry.COLUMN_BACKDROP_PATH + " TEXT, "                    +
+                        RedditContract.RedditPostsEntry.COLUMN_SCORE + " TEXT, "                    +
                         RedditContract.RedditPostsEntry.COLUMN_RELEASE_DATE    + " TEXT," +
                         RedditContract.RedditPostsEntry.COLUMN_POPULARITY + " TEXT,"                  +
                         RedditContract.RedditPostsEntry.COLUMN_VOTE_AVERAGE   + " DOUBLE, "                    +

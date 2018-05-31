@@ -181,6 +181,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
             contentValues.put(RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID, redditPost.getId());
             contentValues.put(RedditContract.RedditPostsEntry.COLUMN_TITLE, redditPost.getTitle());
             contentValues.put(RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL, redditPost.getThumbnail());
+            contentValues.put(RedditContract.RedditPostsEntry.COLUMN_SCORE, redditPost.getScore());
             submissionsArrayList.add(contentValues);
         }
         ContentResolver contentResolver = getContentResolver();
@@ -188,7 +189,6 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                 submissionsArrayList.toArray(new ContentValues[submissionsArrayList.size()]));
 
         getSupportLoaderManager().initLoader(DbHelper.ID_SUBMISSIONS_LOADER, null, this);
-
     }
 
     private void updatePage(List<RedditPost> redditPosts){
@@ -201,6 +201,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     }
 
 
+    //TODO: Replace with RxJava
     private static class DownloadPageTask extends AsyncTask<String, List<RedditPost>, List<RedditPost>> {
         private final WeakReference<RedditPostListActivity> activity;
 

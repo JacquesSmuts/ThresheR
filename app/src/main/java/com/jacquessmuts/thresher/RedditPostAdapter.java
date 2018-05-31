@@ -2,6 +2,7 @@ package com.jacquessmuts.thresher;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +53,15 @@ public class RedditPostAdapter
             //TODO: show correct data from cursor instead of submission
 
             redditPost = new RedditPost();
-            redditPost.setThumbnail(cursor.getString(DbHelper.INDEX_THUMBNAIL_PATH));
+
+            String[] columnNames = cursor.getColumnNames();
+            for (String name: columnNames) {
+                Log.i("adapter", name);
+            }
+
             redditPost.setTitle(cursor.getString(DbHelper.INDEX_TITLE));
+            redditPost.setThumbnail(cursor.getString(DbHelper.INDEX_THUMBNAIL_PATH));
+            redditPost.setScore(cursor.getInt(DbHelper.INDEX_SCORE));
         }
         else if (redditPosts != null && redditPosts.size() >= position) {
             redditPost = redditPosts.get(position);
