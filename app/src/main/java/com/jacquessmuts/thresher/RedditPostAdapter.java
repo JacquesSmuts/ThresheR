@@ -45,10 +45,9 @@ public class RedditPostAdapter
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
-
         RedditPost redditPost = null;
 
-        if (cursor != null && cursor.getCount() > position){
+        if (cursor != null && !cursor.isClosed() && cursor.getCount() > position){
             cursor.moveToPosition(position);
             //TODO: show correct data from cursor instead of submission
 
