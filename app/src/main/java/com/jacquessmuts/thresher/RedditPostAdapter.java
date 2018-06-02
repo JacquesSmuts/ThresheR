@@ -67,7 +67,8 @@ public class RedditPostAdapter
             redditPost = redditPosts.get(position);
         }
 
-        if (redditPost == null) return;
+        if (redditPost == null || redditPost.getTitle() == null || redditPost.getTitle().isEmpty())
+            return;
 
         String thumbnailPath = redditPost.getThumbnail();
         if (thumbnailPath == null || thumbnailPath.isEmpty() || thumbnailPath.equals("default")) {
@@ -79,7 +80,6 @@ public class RedditPostAdapter
 
         holder.textTitle.setText(redditPost.getTitle());
         holder.textScore.setText(String.valueOf(redditPost.getScore()));
-
 
         holder.itemView.setTag(redditPost);
         RedditPost finalRedditPost = redditPost;

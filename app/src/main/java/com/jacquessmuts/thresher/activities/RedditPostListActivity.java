@@ -4,12 +4,9 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -34,13 +31,14 @@ import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 import net.dean.jraw.pagination.DefaultPaginator;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * An activity representing a list of Submissions. This activity
@@ -76,10 +74,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
         getSupportLoaderManager().initLoader(DbHelper.ID_SUBMISSIONS_LOADER, null, this);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-
+        //TODO: replace this with a more universal two-pane Util.
         if (findViewById(R.id.submission_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -113,7 +108,6 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                         Log.i(LOG_TAG, "clicked on item " + redditPost.toString());
                         startActivity(RedditPostDetailActivity.getIntent(RedditPostListActivity.this, redditPost));
                     }
-
                     @Override
                     public void onError(Throwable e) {
                     }
@@ -150,13 +144,6 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         cursor = data;
-        //if (sortingOption == Server.SortingOption.FAVORITE) {
-        //getData(1);
-        //if (scrollPosition > 0) {
-        //    layoutManager.scrollToPosition(scrollPosition);
-        //    scrollPosition = -1;
-        //}
-        //}
     }
 
     @Override
@@ -171,7 +158,30 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     private void getFrontPage(){
         setLoading(true);
-        new DownloadPageTask(new WeakReference<>(this)).execute("stringsss");
+
+        Observable.fromCallable(() -> frontPageResults())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+
+                .subscribe((redditPosts) -> {
+                    insertDBValues(redditPosts);
+                    updatePage(redditPosts);
+                    setLoading(false);
+                });
+    }
+
+    private List<RedditPost> frontPageResults(){
+        RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
+        DefaultPaginator<Submission> frontPage = redditClient.frontPage()
+                .sorting(SubredditSort.TOP)
+                .timePeriod(TimePeriod.DAY)
+                .limit(30)
+                .build();
+        Listing<Submission> submissions = frontPage.next();
+        for (Submission s : submissions) {
+            System.out.println(s.getTitle());
+        }
+        return RedditPost.fromSubmission(submissions);
     }
 
     private void insertDBValues(List<RedditPost> redditPosts){
@@ -197,43 +207,10 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     }
 
     private void setLoading(boolean isLoading){
-        //TODO: make progress bar (in)visible
-    }
-
-
-    //TODO: Replace with RxJava
-    private static class DownloadPageTask extends AsyncTask<String, List<RedditPost>, List<RedditPost>> {
-        private final WeakReference<RedditPostListActivity> activity;
-
-        DownloadPageTask(WeakReference<RedditPostListActivity> activity) {
-            this.activity = activity;
-        }
-
-        @Override
-        protected List<RedditPost> doInBackground(String... usernames) {
-            RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
-            DefaultPaginator<Submission> frontPage = redditClient.frontPage()
-                    .sorting(SubredditSort.TOP)
-                    .timePeriod(TimePeriod.DAY)
-                    .limit(30)
-                    .build();
-
-            Listing<Submission> submissions = frontPage.next();
-            for (Submission s : submissions) {
-                System.out.println(s.getTitle());
-            }
-
-            return RedditPost.fromSubmission(submissions);
-        }
-
-        @Override
-        protected void onPostExecute(List<RedditPost> redditPosts) {
-            RedditPostListActivity activity = this.activity.get();
-
-            if (activity != null) {
-                activity.insertDBValues(redditPosts);
-                activity.updatePage(redditPosts);
-            }
+        if (isLoading) {
+            findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.progress_bar).setVisibility(View.GONE);
         }
     }
 }
