@@ -23,6 +23,7 @@ public class RedditPostDetailActivity extends AppCompatActivity {
 
     public static final String KEY_REDDIT_POST = "reddit_post";
 
+    private String redditPostId;
     private RedditPost redditPost;
 
     public static Intent getIntent(Context context, RedditPost redditPost){
@@ -55,6 +56,7 @@ public class RedditPostDetailActivity extends AppCompatActivity {
         if (intent != null) {
             //submission = GenericUtils.deserializeSubmission(intent.getStringExtra(KEY_REDDIT_POST));
             redditPost = intent.getParcelableExtra(KEY_REDDIT_POST);
+            redditPostId = redditPost.getId();
         }
 
         // savedInstanceState is non-null when there is fragment state
@@ -70,8 +72,7 @@ public class RedditPostDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(SubmissionDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(SubmissionDetailFragment.ARG_ITEM_ID));
+            arguments.putParcelable(KEY_REDDIT_POST, redditPost);
             SubmissionDetailFragment fragment = new SubmissionDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

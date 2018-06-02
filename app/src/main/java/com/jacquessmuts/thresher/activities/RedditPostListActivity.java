@@ -159,10 +159,9 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     private void getFrontPage(){
         setLoading(true);
 
-        Observable.fromCallable(() -> frontPageResults())
+        Observable.fromCallable(this::downloadFrontPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-
                 .subscribe((redditPosts) -> {
                     insertDBValues(redditPosts);
                     updatePage(redditPosts);
@@ -170,7 +169,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                 });
     }
 
-    private List<RedditPost> frontPageResults(){
+    private List<RedditPost> downloadFrontPage(){
         RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
         DefaultPaginator<Submission> frontPage = redditClient.frontPage()
                 .sorting(SubredditSort.TOP)

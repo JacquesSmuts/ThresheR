@@ -13,7 +13,7 @@ public class DbHelper extends SQLiteOpenHelper {
      * This is the name of our database. Database names should be descriptive and end with the
      * .db extension.
      */
-    public static final String DATABASE_NAME = "thresher.db";
+    private static final String DATABASE_NAME = "thresher.db";
 
     private static final int DATABASE_VERSION = 1;
 
@@ -40,7 +40,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final int INDEX_OVERVIEW = 4;
     public static final int INDEX_IS_FAVORITE = 5;
 
-    public DbHelper(Context context) {
+    DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -66,6 +66,7 @@ public class DbHelper extends SQLiteOpenHelper {
                          * RedditPostsEntry implements the interface, "BaseColumns", which does have a field
                          * named "_ID". We use that here to designate our table's primary key.
                          */
+                        //TODO: handle replace/update conflicts better, so as not to overwrite anything
                         RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID + " TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE, "                 +
                         RedditContract.RedditPostsEntry.COLUMN_TITLE   + " TEXT, "                    +
                         RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL + " TEXT,"                  +

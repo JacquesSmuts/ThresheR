@@ -59,6 +59,7 @@ public class RedditPostAdapter
                 Log.i("adapter", name);
             }
 
+            redditPost.setId(cursor.getString(DbHelper.INDEX_SUBMISSION_ID));
             redditPost.setTitle(cursor.getString(DbHelper.INDEX_TITLE));
             redditPost.setThumbnail(cursor.getString(DbHelper.INDEX_THUMBNAIL_PATH));
             redditPost.setScore(cursor.getInt(DbHelper.INDEX_SCORE));
@@ -83,9 +84,8 @@ public class RedditPostAdapter
 
         holder.itemView.setTag(redditPost);
         RedditPost finalRedditPost = redditPost;
-        holder.itemView.setOnClickListener(v -> {
-            RedditPostSelectedBus.getInstance().onNext(finalRedditPost);
-        });
+        holder.itemView.setOnClickListener(v ->
+                RedditPostSelectedBus.getInstance().onNext(finalRedditPost));
 
     }
 
