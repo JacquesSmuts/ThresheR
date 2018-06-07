@@ -23,6 +23,7 @@ import com.jacquessmuts.thresher.database.DbHelper;
 import com.jacquessmuts.thresher.database.RedditContract;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
+import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Listing;
@@ -180,7 +181,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
         for (Submission s : submissions) {
             System.out.println(s.getTitle());
         }
-        return RedditPost.fromSubmission(submissions);
+        return JrawConversionUtils.getRedditPosts(submissions);
     }
 
     private void insertDBValues(List<RedditPost> redditPosts){

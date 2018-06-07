@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.ThresherApp;
+import com.jacquessmuts.thresher.models.RedditComment;
 import com.jacquessmuts.thresher.models.RedditPost;
+import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Comment;
@@ -80,7 +82,7 @@ public class SubmissionDetailFragment extends Fragment {
         Observable.fromCallable(this::downloadComments)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((redditPosts) -> {
+                .subscribe((redditComments) -> {
                     Log.i("getComments", "DONE!");
 //                    insertDBValues(redditPosts);
 //                    updatePage(redditPosts);
@@ -88,7 +90,7 @@ public class SubmissionDetailFragment extends Fragment {
                 });
     }
 
-    private List<Comment> downloadComments(){
+    private List<RedditComment> downloadComments(){
         RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
 
         // By default, this Iterable will use pre-order traversal.
@@ -97,17 +99,24 @@ public class SubmissionDetailFragment extends Fragment {
         CommentNode rootNode = redditClient.submission(redditPost.getId()).comments();
         Iterator<CommentNode<PublicContribution<?>>> iterable = rootNode.walkTree().iterator();
 
-        List<Comment> comments = new ArrayList<>();
+        List<RedditComment> comments = new ArrayList<>();
         while (iterable.hasNext()) {
             // A PublicContribution is either a Submission or a Comment.
-            PublicContribution<?> thing = iterable.next().getSubject();
+            CommentNode<PublicContribution<?>> commentNode = iterable.next();
+            PublicContribution<?> thing = commentNode.getSubject();
             if (!(thing instanceof Comment)) continue; //Ignore non-comments for now
 
-            Comment comment = (Comment) thing;
-            comments.add(comment);
+            Comment originalComment = (Comment) thing;
+            RedditComment redditComment = JrawConversionUtils.getRedditComment(originalComment);
+            redditComment.setDepth(commentNode.getDepth());
+            comments.add(redditComment);
 
-            Log.i(comment.getAuthor(), comment.getBody());
-            // Do something with each Submission/Comment
+            StringBuilder depth = new StringBuilder();
+            for (int i = 0; i <= redditComment.getDepth(); i++){
+                depth.append("  ");
+            }
+
+            Log.v(redditComment.getAuthor(),  " \n  " + depth + redditComment.getBody());
         }
 
         return comments;

@@ -5,18 +5,14 @@ import android.os.Parcelable;
 
 import net.dean.jraw.databind.UnixTime;
 import net.dean.jraw.models.CommentSort;
-import net.dean.jraw.models.Listing;
-import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.VoteDirection;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Jacques Smuts on 4/15/2018.
  * This is a model based on the JRAW Submission.class model.
- * Will probably use this model instead of dealing with JRAW directly.
+ * Use this model instead of dealing with JRAW directly.
  */
 public class RedditPost implements Parcelable {
 
@@ -47,27 +43,6 @@ public class RedditPost implements Parcelable {
     VoteDirection vote; //aka likes
     Integer commentCount;
     int score;
-
-
-    public static RedditPost fromSubmission(Submission submission){
-        RedditPost toReturn = new RedditPost();
-
-        toReturn.setId(submission.getId());
-        toReturn.setThumbnail(submission.getThumbnail());
-        toReturn.setTitle(submission.getTitle());
-        toReturn.setScore(submission.getScore());
-
-        return toReturn;
-    }
-
-    public static List<RedditPost> fromSubmission(Listing<Submission> submissionListing){
-        List<RedditPost> toReturn = new ArrayList<>();
-        for (Submission submission: submissionListing){
-            toReturn.add(RedditPost.fromSubmission(submission));
-        }
-        return toReturn;
-    }
-
 
     public boolean isNsfw() {
         return isNsfw;
