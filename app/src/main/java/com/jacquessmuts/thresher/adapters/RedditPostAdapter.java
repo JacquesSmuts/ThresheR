@@ -1,4 +1,4 @@
-package com.jacquessmuts.thresher;
+package com.jacquessmuts.thresher.adapters;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.activities.RedditPostListActivity;
 import com.jacquessmuts.thresher.database.DbHelper;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
@@ -115,7 +116,7 @@ public class RedditPostAdapter
         ViewHolder(View view) {
             super(view);
             imagePreview = view.findViewById(R.id.image_main);
-            textTitle = view.findViewById(R.id.text_title);
+            textTitle = view.findViewById(R.id.text_body);
             textScore = view.findViewById(R.id.text_score);
             textInfo = view.findViewById(R.id.text_info);
         }

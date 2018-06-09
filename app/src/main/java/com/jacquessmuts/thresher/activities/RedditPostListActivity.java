@@ -17,8 +17,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.jacquessmuts.thresher.R;
-import com.jacquessmuts.thresher.RedditPostAdapter;
 import com.jacquessmuts.thresher.ThresherApp;
+import com.jacquessmuts.thresher.adapters.RedditPostAdapter;
 import com.jacquessmuts.thresher.database.DbHelper;
 import com.jacquessmuts.thresher.database.RedditContract;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
@@ -151,6 +151,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         submissionListAdapter.swapCursor(null);
     }
+
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, List<RedditPost> redditPosts) {
         submissionListAdapter = new RedditPostAdapter(this, redditPosts);
         submissionListAdapter.swapCursor(cursor);

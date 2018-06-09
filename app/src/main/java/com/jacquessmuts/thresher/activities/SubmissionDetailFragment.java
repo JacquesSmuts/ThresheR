@@ -4,14 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.ThresherApp;
+import com.jacquessmuts.thresher.adapters.RedditCommentAdapter;
 import com.jacquessmuts.thresher.models.RedditComment;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
@@ -38,6 +39,10 @@ import io.reactivex.schedulers.Schedulers;
 public class SubmissionDetailFragment extends Fragment {
 
     private RedditPost redditPost;
+    private List<RedditComment> redditComments;
+
+    private RecyclerView recyclerView;
+    RedditCommentAdapter commentAdapter;
 
     public SubmissionDetailFragment() {
     }
@@ -57,6 +62,7 @@ public class SubmissionDetailFragment extends Fragment {
             if (appBarLayout != null) {
                 appBarLayout.setTitle(redditPost.getTitle());
             }
+
         }
 
         getComments();
@@ -67,26 +73,37 @@ public class SubmissionDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.submission_detail, container, false);
 
+        recyclerView = rootView.findViewById(R.id.recyclerview_comments);
         // Show the dummy content as text in a TextView.
         if (redditPost != null) {
-            ((TextView) rootView.findViewById(R.id.submission_detail)).setText(redditPost.getTitle());
+            //((TextView) rootView.findViewById(R.id.submission_detail)).setText(redditPost.getTitle());
         }
 
+        setupCommentAdapter();
         return rootView;
     }
 
-    private void getComments(){
+    private void setupCommentAdapter() {
+        commentAdapter = new RedditCommentAdapter(getActivity(), redditComments);
+        //submissionListAdapter.swapCursor(cursor); TODO implement cursor?
 
+        recyclerView.setAdapter(commentAdapter);
+    }
+
+    private void refreshCommentAdapter(List<RedditComment> comments){
+        redditComments = comments;
+        commentAdapter.setRedditComments(redditComments);
+    }
+
+    private void getComments(){
         if (redditPost == null || redditPost.getId() == null) return;
 
         Observable.fromCallable(this::downloadComments)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((redditComments) -> {
+                    refreshCommentAdapter(redditComments);
                     Log.i("getComments", "DONE!");
-//                    insertDBValues(redditPosts);
-//                    updatePage(redditPosts);
-//                    setLoading(false);
                 });
     }
 
