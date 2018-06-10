@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -41,7 +43,7 @@ public class SubmissionDetailFragment extends Fragment {
     private RedditPost redditPost;
     private List<RedditComment> redditComments;
 
-    private RecyclerView recyclerView;
+    @BindView(R.id.recyclerview_comments) RecyclerView recyclerView;
     RedditCommentAdapter commentAdapter;
 
     public SubmissionDetailFragment() {
@@ -72,8 +74,8 @@ public class SubmissionDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.submission_detail, container, false);
+        ButterKnife.bind(this, rootView);
 
-        recyclerView = rootView.findViewById(R.id.recyclerview_comments);
         // Show the dummy content as text in a TextView.
         if (redditPost != null) {
             //((TextView) rootView.findViewById(R.id.submission_detail)).setText(redditPost.getTitle());

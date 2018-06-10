@@ -18,6 +18,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Jacques Smuts on 4/21/2018.
  * This is the main recyclerview, which handles the list of reddit posts, aka redditPosts
@@ -107,18 +110,15 @@ public class RedditPostAdapter
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        final ImageView imagePreview;
-        final TextView textTitle;
-        final TextView textScore;
-        final TextView textInfo;
+        @BindView(R.id.image_main) ImageView imagePreview;
+        @BindView(R.id.text_title)  TextView textTitle;
+        @BindView(R.id.text_score)  TextView textScore;
+        @BindView(R.id.text_info)  TextView textInfo;
         //TODO: add upvote/downvote buttons
 
         ViewHolder(View view) {
             super(view);
-            imagePreview = view.findViewById(R.id.image_main);
-            textTitle = view.findViewById(R.id.text_body);
-            textScore = view.findViewById(R.id.text_score);
-            textInfo = view.findViewById(R.id.text_info);
+            ButterKnife.bind(this, view);
         }
     }
 }

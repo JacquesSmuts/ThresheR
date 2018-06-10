@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.ThresherApp;
@@ -35,6 +36,8 @@ import net.dean.jraw.pagination.DefaultPaginator;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -64,12 +67,16 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     public CompositeDisposable eventDisposables = new CompositeDisposable();
 
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.submission_list) RecyclerView recyclerView;
+    @BindView(R.id.progress_bar) ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submission_list);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
@@ -84,9 +91,8 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
             mTwoPane = true;
         }
 
-        View recyclerView = findViewById(R.id.submission_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView, null);
+        setupRecyclerView(recyclerView, null);
 
         getFrontPage();
     }
@@ -203,15 +209,14 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     }
 
     private void updatePage(List<RedditPost> redditPosts){
-        View recyclerView = findViewById(R.id.submission_list);
-        setupRecyclerView((RecyclerView) recyclerView, redditPosts);
+        setupRecyclerView(recyclerView, redditPosts);
     }
 
     private void setLoading(boolean isLoading){
         if (isLoading) {
-            findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.progress_bar).setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
         }
     }
 }

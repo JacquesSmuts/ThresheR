@@ -21,6 +21,9 @@ import net.dean.jraw.oauth.StatefulAuthHelper;
 
 import java.lang.ref.WeakReference;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * This activity is dedicated to a WebView to guide the user through the authentication process.
  *
@@ -30,6 +33,8 @@ import java.lang.ref.WeakReference;
  */
 public class NewUserActivity extends AppCompatActivity {
 
+    @BindView(R.id.webView) WebView webView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +43,7 @@ public class NewUserActivity extends AppCompatActivity {
         // Don't save any cookies, cache, or history from previous sessions. If we don't, once the
         // first user logs in and authenticates, the next time we go to add a new user, the first
         // user will be automatically logged in, which is not what we want.
-        final WebView webView = findViewById(R.id.webView);
+        ButterKnife.bind(this);
         webView.clearCache(true);
         webView.clearHistory();
 

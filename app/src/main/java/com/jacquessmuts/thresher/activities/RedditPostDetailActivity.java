@@ -13,6 +13,9 @@ import android.view.MenuItem;
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.models.RedditPost;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * An activity representing a single Submission detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
@@ -26,6 +29,9 @@ public class RedditPostDetailActivity extends AppCompatActivity {
     private String redditPostId;
     private RedditPost redditPost;
 
+    @BindView(R.id.detail_toolbar) Toolbar toolbar;
+    @BindView(R.id.fab) FloatingActionButton fab;
+
     public static Intent getIntent(Context context, RedditPost redditPost){
         Intent intent = new Intent (context, RedditPostDetailActivity.class);
         //intent.putExtra(KEY_REDDIT_POST, GenericUtils.serializeSubmission(redditPost));
@@ -37,10 +43,10 @@ public class RedditPostDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submission_detail);
-        Toolbar toolbar = findViewById(R.id.detail_toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view ->
                 Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()

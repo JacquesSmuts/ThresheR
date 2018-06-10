@@ -2,6 +2,7 @@ package com.jacquessmuts.thresher.adapters;
 
 import android.app.Activity;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,12 @@ import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.models.RedditComment;
+import com.jacquessmuts.thresher.utilities.GenericUtils;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Jacques Smuts on 4/21/2018.
@@ -70,8 +75,12 @@ public class RedditCommentAdapter
         holder.textBody.setText(redditComment.getBody());
         holder.textScore.setText(String.valueOf(redditComment.getScore()));
 
-        int paddingLeft = 8 * redditComment.getDepth();
-        holder.layout.setPaddingRelative(paddingLeft, 0, 0, 0);
+        int marginLeft = (int) GenericUtils.convertDpToPixel(parentActivity, 8 * (redditComment.getDepth()-1));
+        int marginOthers = (int) GenericUtils.convertDpToPixel(parentActivity, 1);;
+        int marginTop = (redditComment.getDepth() > 1) ? 0 : marginOthers;
+        ViewGroup.MarginLayoutParams layoutParams =
+                (ViewGroup.MarginLayoutParams) holder.cardView.getLayoutParams();
+        layoutParams.setMargins(marginLeft, marginTop, marginOthers, marginOthers);
 
         holder.itemView.setTag(redditComment);
 
@@ -100,18 +109,16 @@ public class RedditCommentAdapter
 //    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView textInfo;
-        final TextView textBody;
-        final TextView textScore;
-        final ConstraintLayout layout;
+        @BindView(R.id.layout_card_view) CardView cardView;
+        @BindView(R.id.constraintlayout_comments) ConstraintLayout layout;
+        @BindView(R.id.text_info) TextView textInfo;
+        @BindView(R.id.text_body) TextView textBody;
+        @BindView(R.id.text_score) TextView textScore;
         //TODO: add upvote/downvote buttons
 
         ViewHolder(View view) {
             super(view);
-            layout = view.findViewById(R.id.constraintlayout_comments);
-            textBody = view.findViewById(R.id.text_body);
-            textScore = view.findViewById(R.id.text_score);
-            textInfo = view.findViewById(R.id.text_info);
+            ButterKnife.bind(this, view);
         }
     }
 }
