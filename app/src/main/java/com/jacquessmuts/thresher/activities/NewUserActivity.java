@@ -23,6 +23,7 @@ import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * This activity is dedicated to a WebView to guide the user through the authentication process.
@@ -37,6 +38,7 @@ public class NewUserActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Timber.d("OnCreate Beginning");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
 
@@ -87,6 +89,7 @@ public class NewUserActivity extends AppCompatActivity {
 
         // Finally, show the authorization URL to the user
         webView.loadUrl(authUrl);
+        Timber.d("OnCreate Done");
     }
 
     /**
@@ -110,6 +113,7 @@ public class NewUserActivity extends AppCompatActivity {
                 helper.onUserChallenge(urls[0]);
                 return true;
             } catch (OAuthException e) {
+                Timber.e(e.getMessage());
                 // Report failure if an OAuthException occurs
                 return false;
             }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +30,7 @@ import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * A fragment representing a single Submission detail screen.
@@ -51,6 +51,7 @@ public class SubmissionDetailFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Timber.d("OnCreate Beginning");
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null && getArguments().containsKey(RedditPostDetailActivity.KEY_REDDIT_POST)) {
@@ -68,11 +69,13 @@ public class SubmissionDetailFragment extends Fragment {
         }
 
         getComments();
+        Timber.d("OnCreate Done");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Timber.d("OnCreateView Beginning");
         View rootView = inflater.inflate(R.layout.submission_detail, container, false);
         ButterKnife.bind(this, rootView);
 
@@ -82,6 +85,7 @@ public class SubmissionDetailFragment extends Fragment {
         }
 
         setupCommentAdapter();
+        Timber.d("OnCreateView Done");
         return rootView;
     }
 
@@ -103,7 +107,7 @@ public class SubmissionDetailFragment extends Fragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((redditComments) -> {
                     refreshCommentAdapter(redditComments);
-                    Log.i("getComments", "DONE!");
+                    Timber.d("GetComments: Done!");
                 });
     }
 
@@ -133,7 +137,7 @@ public class SubmissionDetailFragment extends Fragment {
                 depth.append("  ");
             }
 
-            Log.v(redditComment.getAuthor(),  " \n  " + depth + redditComment.getBody());
+            Timber.v(redditComment.getAuthor() +  ": \n  " + depth + redditComment.getBody());
         }
 
         return comments;

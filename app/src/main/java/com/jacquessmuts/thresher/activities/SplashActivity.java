@@ -15,16 +15,20 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import timber.log.Timber;
+
 public class SplashActivity extends AppCompatActivity {
 
     private static final int REQ_CODE_LOGIN = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Timber.d("OnCreate Beginning");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
         doAuthCheck();
+        Timber.d("OnCreate Done");
     }
 
     @Override

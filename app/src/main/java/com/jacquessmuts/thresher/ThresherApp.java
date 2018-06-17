@@ -14,6 +14,8 @@ import net.dean.jraw.oauth.AccountHelper;
 
 import java.util.UUID;
 
+import timber.log.Timber;
+
 /**
  * Created by Jacques Smuts on 2/19/2018.
  */
@@ -26,6 +28,10 @@ public class ThresherApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
 
         // Get UserAgent and OAuth2 data from AndroidManifest.xml
         AppInfoProvider provider = new ManifestAppInfoProvider(getApplicationContext());
@@ -60,6 +66,8 @@ public class ThresherApp extends Application {
 
             return null;
         });
+
+        Timber.d("App OnCreate Done");
     }
 
     public static AccountHelper getAccountHelper() { return accountHelper; }

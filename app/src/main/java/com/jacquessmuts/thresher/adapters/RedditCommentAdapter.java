@@ -18,6 +18,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Created by Jacques Smuts on 4/21/2018.
@@ -44,7 +45,7 @@ public class RedditCommentAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-
+        Timber.d("OnBindViewHolder " + position);
         RedditComment redditComment = null;
 
         if (redditComments != null && redditComments.size() >= position) {

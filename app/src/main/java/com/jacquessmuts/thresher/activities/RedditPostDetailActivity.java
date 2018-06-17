@@ -15,6 +15,7 @@ import com.jacquessmuts.thresher.models.RedditPost;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * An activity representing a single Submission detail screen. This
@@ -41,6 +42,7 @@ public class RedditPostDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Timber.d("OnCreate Beginning");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submission_detail);
         ButterKnife.bind(this);
@@ -85,6 +87,7 @@ public class RedditPostDetailActivity extends AppCompatActivity {
                     .add(R.id.submission_detail_container, fragment)
                     .commit();
         }
+        Timber.d("OnCreate Done");
     }
 
     @Override

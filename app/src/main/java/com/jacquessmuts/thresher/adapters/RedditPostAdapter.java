@@ -2,7 +2,6 @@ package com.jacquessmuts.thresher.adapters;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Created by Jacques Smuts on 4/21/2018.
@@ -54,18 +54,13 @@ public class RedditPostAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-
+        Timber.d("OnBindViewHolder " + position);
         RedditPost redditPost = null;
 
         if (cursor != null && !cursor.isClosed() && cursor.getCount() > position){
             cursor.moveToPosition(position);
 
             redditPost = new RedditPost();
-
-            String[] columnNames = cursor.getColumnNames();
-            for (String name: columnNames) {
-                Log.i("adapter", name);
-            }
 
             redditPost.setId(cursor.getString(DbHelper.INDEX_SUBMISSION_ID));
             redditPost.setTitle(cursor.getString(DbHelper.INDEX_TITLE));

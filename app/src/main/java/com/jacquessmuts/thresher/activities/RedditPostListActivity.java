@@ -13,7 +13,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -46,6 +45,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * An activity representing a list of Submissions. This activity
@@ -76,6 +76,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Timber.d("OnCreate Beginning");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submission_list);
         ButterKnife.bind(this);
@@ -91,6 +92,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
         setupRecyclerView(recyclerView, null);
 
         getFrontPage();
+        Timber.d("OnCreate End");
     }
 
     @Override
@@ -108,7 +110,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                 .subscribeWith(new DisposableObserver<RedditPost>() {
                     @Override
                     public void onNext(RedditPost redditPost) {
-                        Log.i(LOG_TAG, "clicked on item " + redditPost.toString());
+                        Timber.i( "clicked on item " + redditPost.toString());
                         startActivity(RedditPostDetailActivity.getIntent(RedditPostListActivity.this, redditPost));
                     }
                     @Override
@@ -125,7 +127,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                 .subscribeWith(new DisposableObserver<RedditPostVotedBus.VoteAction>() {
                     @Override
                     public void onNext(RedditPostVotedBus.VoteAction voteAction) {
-                        Log.i(LOG_TAG, "voted on item " + voteAction.toString());
+                        Timber.i("voted on item " + voteAction.toString());
                         RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
 
                         try {
@@ -139,12 +141,12 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                             }
                         } catch (ApiException e){
                             //TODO the JRAW client currently has this issue so upvotes sometimes don't work. Make more robust.
-                            Log.w(LOG_TAG, e.getMessage());
+                            Timber.w(e.getMessage());
                         }
                     }
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(LOG_TAG, e.getMessage());
+                        Timber.e(e.getMessage());
                     }
                     @Override
                     public void onComplete() {

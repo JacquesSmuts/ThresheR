@@ -21,6 +21,8 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 /**
  * Shows some very simple information about the currently authenticated user. Currently, it shows
  * their username, link karma, comment karma, access token expiration, and if we have a refresh
@@ -30,11 +32,13 @@ public class UserOverviewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Timber.d("OnCreate Beginning");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_overview);
 
         // Fetch the user's account information
         new GetUserInfoTask(this).execute(ThresherApp.getAccountHelper().getReddit());
+        Timber.d("OnCreate Done");
     }
 
     @Override
