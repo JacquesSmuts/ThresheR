@@ -67,7 +67,7 @@ public class DbHelper extends SQLiteOpenHelper {
                          * named "_ID". We use that here to designate our table's primary key.
                          */
                         //TODO: handle replace/update conflicts better, so as not to overwrite anything
-                        RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID + " TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE, "                 +
+                        RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID + " TEXT PRIMARY KEY NOT NULL ON CONFLICT IGNORE, "                 +
                         RedditContract.RedditPostsEntry.COLUMN_TITLE   + " TEXT, "                    +
                         RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL + " TEXT,"                  +
                         RedditContract.RedditPostsEntry.COLUMN_SCORE + " TEXT, "                    +

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
+import com.jacquessmuts.thresher.R;
 import com.squareup.moshi.JsonAdapter;
 
 import net.dean.jraw.JrawUtils;
@@ -17,6 +18,9 @@ import java.io.IOException;
  */
 public class GenericUtils {
 
+    public static boolean isTablet(Resources resources){
+        return resources.getBoolean(R.bool.isTablet);
+    }
 
     public static String serializeSubmission(Submission submission){
         JsonAdapter<Submission> jsonAdapter = JrawUtils.moshi.adapter(Submission.class).serializeNulls();

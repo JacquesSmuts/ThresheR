@@ -12,13 +12,11 @@ import java.util.List;
 
 /**
  * Created by Jacques Smuts on 6/7/2018.
- * TODO: set header description
+ * Utility class for converting between JRAW classes and ThresheR/Android custom classes.
  */
 public class JrawConversionUtils {
 
-
-
-    public static RedditPost getRedditPost(Submission submission){
+    private static RedditPost getRedditPost(Submission submission){
         RedditPost toReturn = new RedditPost();
 
         toReturn.setId(submission.getId());
@@ -38,8 +36,6 @@ public class JrawConversionUtils {
         toReturn.setBody(comment.getBody());
         toReturn.setCreated_utc(comment.getCreated());
         toReturn.setScore(comment.getScore());
-
-        //toReturn.setChildren(comment.getReplies());
 
         return toReturn;
     }

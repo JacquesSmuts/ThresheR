@@ -29,8 +29,6 @@ public class RedditCommentAdapter
     private final Activity parentActivity;
     private List<RedditComment> redditComments;
 
-//    private Cursor cursor;
-
     public RedditCommentAdapter(Activity parent, List<RedditComment> items) {
         redditComments = items;
         parentActivity = parent;
@@ -48,22 +46,6 @@ public class RedditCommentAdapter
 
         RedditComment redditComment = null;
 
-//        if (cursor != null && !cursor.isClosed() && cursor.getCount() > position){
-//            cursor.moveToPosition(position);
-//            //TODO: show correct data from cursor instead of submission
-//
-//            redditPost = new RedditPost();
-//
-//            String[] columnNames = cursor.getColumnNames();
-//            for (String name: columnNames) {
-//                Log.i("adapter", name);
-//            }
-//
-//            redditPost.setId(cursor.getString(DbHelper.INDEX_SUBMISSION_ID));
-//            redditPost.setTitle(cursor.getString(DbHelper.INDEX_TITLE));
-//            redditPost.setThumbnail(cursor.getString(DbHelper.INDEX_THUMBNAIL_PATH));
-//            redditPost.setScore(cursor.getInt(DbHelper.INDEX_SCORE));
-//        } else
         if (redditComments != null && redditComments.size() >= position) {
             redditComment = redditComments.get(position);
         }
@@ -89,9 +71,6 @@ public class RedditCommentAdapter
     @Override
     public int getItemCount() {
         int count = 0;
-//        if (cursor != null && cursor.getCount() > 0){
-//            count = cursor.getCount();
-//        } else
         if (redditComments != null){
             count = redditComments.size();
         }
@@ -102,11 +81,6 @@ public class RedditCommentAdapter
         redditComments = newComments;
         notifyDataSetChanged();
     }
-
-//    public void swapCursor(Cursor newCursor) {
-//        cursor = newCursor;
-//        notifyDataSetChanged();
-//    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.layout_card_view) CardView cardView;

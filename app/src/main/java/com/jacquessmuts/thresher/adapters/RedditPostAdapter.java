@@ -32,6 +32,7 @@ public class RedditPostAdapter
     private final RedditPostListActivity parentActivity;
     private final List<RedditPost> redditPosts;
 
+    //TODO: remove cursor from adapter. Database must be completely handled in Activities
     private Cursor cursor;
 
     public RedditPostAdapter(RedditPostListActivity parent,
@@ -54,7 +55,6 @@ public class RedditPostAdapter
 
         if (cursor != null && !cursor.isClosed() && cursor.getCount() > position){
             cursor.moveToPosition(position);
-            //TODO: show correct data from cursor instead of submission
 
             redditPost = new RedditPost();
 

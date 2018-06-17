@@ -87,8 +87,6 @@ public class SubmissionDetailFragment extends Fragment {
 
     private void setupCommentAdapter() {
         commentAdapter = new RedditCommentAdapter(getActivity(), redditComments);
-        //submissionListAdapter.swapCursor(cursor); TODO implement cursor?
-
         recyclerView.setAdapter(commentAdapter);
     }
 

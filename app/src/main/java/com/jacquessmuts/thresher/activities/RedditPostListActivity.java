@@ -24,6 +24,7 @@ import com.jacquessmuts.thresher.database.DbHelper;
 import com.jacquessmuts.thresher.database.RedditContract;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
+import com.jacquessmuts.thresher.utilities.GenericUtils;
 import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
 
 import net.dean.jraw.RedditClient;
@@ -58,7 +59,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
-    private boolean mTwoPane;
+    private boolean isTablet;
     public static final String LOG_TAG = RedditPostListActivity.class.getSimpleName();
 
     private RedditPostAdapter submissionListAdapter;
@@ -82,14 +83,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
         getSupportLoaderManager().initLoader(DbHelper.ID_SUBMISSIONS_LOADER, null, this);
 
-        //TODO: replace this with a more universal two-pane Util.
-        if (findViewById(R.id.submission_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
+        isTablet = GenericUtils.isTablet(getResources());
 
         assert recyclerView != null;
         setupRecyclerView(recyclerView, null);
