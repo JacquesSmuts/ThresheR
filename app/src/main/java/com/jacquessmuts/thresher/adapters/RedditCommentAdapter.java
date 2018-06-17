@@ -68,6 +68,8 @@ public class RedditCommentAdapter
 
         holder.itemView.setTag(redditComment);
 
+        //TODO: add click event to voting
+
     }
 
     @Override

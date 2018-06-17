@@ -67,6 +67,9 @@ public class RedditPostDetailActivity extends AppCompatActivity {
             redditPostId = redditPost.getId();
         }
 
+
+        //TODO: add click event to voting
+
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape).

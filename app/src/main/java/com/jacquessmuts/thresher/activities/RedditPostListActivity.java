@@ -130,6 +130,8 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                         Timber.i("voted on item " + voteAction.toString());
                         RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
 
+                        //TODO: handleLocalVote
+
                         try {
                             switch (voteAction.getVoteDirection()) {
                                 case UP:
