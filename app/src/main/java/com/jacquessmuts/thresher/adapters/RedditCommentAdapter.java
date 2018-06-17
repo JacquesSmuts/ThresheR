@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
@@ -88,7 +89,8 @@ public class RedditCommentAdapter
         @BindView(R.id.text_info) TextView textInfo;
         @BindView(R.id.text_body) TextView textBody;
         @BindView(R.id.text_score) TextView textScore;
-        //TODO: add upvote/downvote buttons
+        @BindView(R.id.button_upvote) ImageButton buttonUpvote;
+        @BindView(R.id.button_downvote) ImageButton buttonDownvote;
 
         ViewHolder(View view) {
             super(view);

@@ -228,6 +228,14 @@ public class RedditPost implements Parcelable {
         this.score = score;
     }
 
+    public VoteDirection getVote() {
+        return vote;
+    }
+
+    public void setVote(VoteDirection vote) {
+        this.vote = vote;
+    }
+
     @Override
     public int describeContents() {
         return 0;

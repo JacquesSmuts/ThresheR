@@ -23,10 +23,12 @@ import com.jacquessmuts.thresher.adapters.RedditPostAdapter;
 import com.jacquessmuts.thresher.database.DbHelper;
 import com.jacquessmuts.thresher.database.RedditContract;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
+import com.jacquessmuts.thresher.eventbusses.RedditPostVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.jacquessmuts.thresher.utilities.GenericUtils;
 import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
 
+import net.dean.jraw.ApiException;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
@@ -113,6 +115,37 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                     public void onError(Throwable e) {
                     }
 
+                    @Override
+                    public void onComplete() {
+                    }
+                }));
+
+        eventDisposables.add(RedditPostVotedBus.getInstance().listen()
+                .observeOn(Schedulers.computation())
+                .subscribeWith(new DisposableObserver<RedditPostVotedBus.VoteAction>() {
+                    @Override
+                    public void onNext(RedditPostVotedBus.VoteAction voteAction) {
+                        Log.i(LOG_TAG, "voted on item " + voteAction.toString());
+                        RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
+
+                        try {
+                            switch (voteAction.getVoteDirection()) {
+                                case UP:
+                                    redditClient.submission(voteAction.getRedditPost().getId()).upvote();
+                                    break;
+                                case DOWN:
+                                    redditClient.submission(voteAction.getRedditPost().getId()).downvote();
+                                    break;
+                            }
+                        } catch (ApiException e){
+                            //TODO the JRAW client currently has this issue so upvotes sometimes don't work. Make more robust.
+                            Log.w(LOG_TAG, e.getMessage());
+                        }
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(LOG_TAG, e.getMessage());
+                    }
                     @Override
                     public void onComplete() {
                     }

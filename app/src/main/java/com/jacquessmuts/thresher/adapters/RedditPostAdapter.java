@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,8 +14,11 @@ import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.activities.RedditPostListActivity;
 import com.jacquessmuts.thresher.database.DbHelper;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
+import com.jacquessmuts.thresher.eventbusses.RedditPostVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.squareup.picasso.Picasso;
+
+import net.dean.jraw.models.VoteDirection;
 
 import java.util.List;
 
@@ -91,6 +95,16 @@ public class RedditPostAdapter
         holder.itemView.setOnClickListener(v ->
                 RedditPostSelectedBus.getInstance().onNext(finalRedditPost));
 
+        holder.buttonUpvote.setOnClickListener(v -> {
+            RedditPostVotedBus.getInstance().onNext(
+                    new RedditPostVotedBus.VoteAction(finalRedditPost, VoteDirection.UP));
+        });
+
+        holder.buttonDownvote.setOnClickListener(v -> {
+            RedditPostVotedBus.getInstance().onNext(
+                    new RedditPostVotedBus.VoteAction(finalRedditPost, VoteDirection.DOWN));
+        });
+
     }
 
     @Override
@@ -114,7 +128,8 @@ public class RedditPostAdapter
         @BindView(R.id.text_title)  TextView textTitle;
         @BindView(R.id.text_score)  TextView textScore;
         @BindView(R.id.text_info)  TextView textInfo;
-        //TODO: add upvote/downvote buttons
+        @BindView(R.id.button_upvote) ImageButton buttonUpvote;
+        @BindView(R.id.button_downvote) ImageButton buttonDownvote;
 
         ViewHolder(View view) {
             super(view);
