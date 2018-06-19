@@ -237,6 +237,13 @@ public class RedditPost implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof RedditPost)) return false;
+        RedditPost redditPost = (RedditPost) obj;
+        return this.id.equals(redditPost.id);
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

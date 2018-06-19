@@ -33,6 +33,7 @@ import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
+import net.dean.jraw.models.VoteDirection;
 import net.dean.jraw.pagination.DefaultPaginator;
 
 import java.util.ArrayList;
@@ -65,6 +66,8 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     public static final String LOG_TAG = RedditPostListActivity.class.getSimpleName();
 
     private RedditPostAdapter submissionListAdapter;
+
+    //TODO: private PageFilter currentlySelectedFilter;
 
     private Cursor cursor;
 
@@ -124,37 +127,75 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
         eventDisposables.add(RedditPostVotedBus.getInstance().listen()
                 .observeOn(Schedulers.computation())
+                .map(voteAction -> {
+                    RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
+                    try {
+                        switch (voteAction.getVoteDirection()) {
+                            case UP:
+                                redditClient.submission(voteAction.getRedditPost().getId()).upvote();
+                                break;
+                            case DOWN:
+                                redditClient.submission(voteAction.getRedditPost().getId()).downvote();
+                                break;
+                        }
+                    } catch (ApiException e){
+                        //TODO the JRAW client currently has this issue so upvotes sometimes don't work. Make more robust.
+                        Timber.w(e.getMessage());
+                    }
+                    return voteAction;
+                } )
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<RedditPostVotedBus.VoteAction>() {
                     @Override
                     public void onNext(RedditPostVotedBus.VoteAction voteAction) {
-                        Timber.i("voted on item " + voteAction.toString());
-                        RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
-
-                        //TODO: handleLocalVote
-
-                        try {
-                            switch (voteAction.getVoteDirection()) {
-                                case UP:
-                                    redditClient.submission(voteAction.getRedditPost().getId()).upvote();
-                                    break;
-                                case DOWN:
-                                    redditClient.submission(voteAction.getRedditPost().getId()).downvote();
-                                    break;
-                            }
-                        } catch (ApiException e){
-                            //TODO the JRAW client currently has this issue so upvotes sometimes don't work. Make more robust.
-                            Timber.w(e.getMessage());
-                        }
+                        Timber.d("voted on item " + voteAction.toString());
+                        handleLocalVote(voteAction);
                     }
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e(e.getMessage());
+                        Timber.e("error");
                     }
                     @Override
                     public void onComplete() {
+                        Timber.v("complete");
                     }
                 }));
 
+    }
+
+    private void handleLocalVote(RedditPostVotedBus.VoteAction voteAction){
+        RedditPost redditPost = voteAction.getRedditPost();
+
+        if (redditPost.getVote() == null) redditPost.setVote(VoteDirection.NONE);
+
+        switch (voteAction.getVoteDirection()) {
+            case UP:
+                switch (redditPost.getVote()){
+                    case UP:
+                    case NONE:
+                        redditPost.setVote(VoteDirection.UP);
+                        break;
+                    case DOWN:
+                        redditPost.setVote(VoteDirection.NONE);
+                        break;
+                }
+                break;
+            case DOWN:
+                switch (redditPost.getVote()){
+                    case UP:
+                        redditPost.setVote(VoteDirection.NONE);
+                        break;
+                    case NONE:
+                    case DOWN:
+                        redditPost.setVote(VoteDirection.DOWN);
+                        break;
+                }
+                break;
+        }
+
+        //TODO: update database entry and refresh all from database
+
+        submissionListAdapter.postUpdated(redditPost);
     }
 
     @NonNull
@@ -182,16 +223,17 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         cursor = data;
+
+        // TODO: load data into memory using RxJava and applying filter
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        submissionListAdapter.swapCursor(null);
+        //nothing to do here?
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, List<RedditPost> redditPosts) {
         submissionListAdapter = new RedditPostAdapter(this, redditPosts);
-        submissionListAdapter.swapCursor(cursor);
         recyclerView.setAdapter(submissionListAdapter);
     }
 
@@ -217,7 +259,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                 .build();
         Listing<Submission> submissions = frontPage.next();
         for (Submission s : submissions) {
-            System.out.println(s.getTitle());
+            Timber.v(s.getTitle());
         }
         return JrawConversionUtils.getRedditPosts(submissions);
     }

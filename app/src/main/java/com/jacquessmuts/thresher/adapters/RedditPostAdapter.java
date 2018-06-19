@@ -1,6 +1,5 @@
 package com.jacquessmuts.thresher.adapters;
 
-import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.activities.RedditPostListActivity;
-import com.jacquessmuts.thresher.database.DbHelper;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
 import com.jacquessmuts.thresher.eventbusses.RedditPostVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
@@ -36,9 +34,6 @@ public class RedditPostAdapter
     private final RedditPostListActivity parentActivity;
     private final List<RedditPost> redditPosts;
 
-    //TODO: remove cursor from adapter. Database must be completely handled in Activities
-    private Cursor cursor;
-
     public RedditPostAdapter(RedditPostListActivity parent,
                              List<RedditPost> items) {
         redditPosts = items;
@@ -57,17 +52,7 @@ public class RedditPostAdapter
         Timber.d("OnBindViewHolder " + position);
         RedditPost redditPost = null;
 
-        if (cursor != null && !cursor.isClosed() && cursor.getCount() > position){
-            cursor.moveToPosition(position);
-
-            redditPost = new RedditPost();
-
-            redditPost.setId(cursor.getString(DbHelper.INDEX_SUBMISSION_ID));
-            redditPost.setTitle(cursor.getString(DbHelper.INDEX_TITLE));
-            redditPost.setThumbnail(cursor.getString(DbHelper.INDEX_THUMBNAIL_PATH));
-            redditPost.setScore(cursor.getInt(DbHelper.INDEX_SCORE));
-        }
-        else if (redditPosts != null && redditPosts.size() >= position) {
+        if (redditPosts != null && redditPosts.size() >= position) {
             redditPost = redditPosts.get(position);
         }
 
@@ -85,8 +70,11 @@ public class RedditPostAdapter
         holder.textTitle.setText(redditPost.getTitle());
         holder.textScore.setText(String.valueOf(redditPost.getScore()));
 
+        //TODO: holder.imageUpvote(redditPost.getVote()) blabla
+
         holder.itemView.setTag(redditPost);
         RedditPost finalRedditPost = redditPost;
+
         holder.itemView.setOnClickListener(v ->
                 RedditPostSelectedBus.getInstance().onNext(finalRedditPost));
 
@@ -105,16 +93,18 @@ public class RedditPostAdapter
     @Override
     public int getItemCount() {
         int count = 0;
-        if (cursor != null && cursor.getCount() > 0){
-            count = cursor.getCount();
-        } else if (redditPosts != null){
+        if (redditPosts != null){
             count = redditPosts.size();
         }
         return count;
     }
 
-    public void swapCursor(Cursor newCursor) {
-        cursor = newCursor;
+    public void postUpdated(RedditPost redditPost){
+        if (redditPosts.contains(redditPost)){
+            RedditPost postToUpdate = redditPosts.get(redditPosts.indexOf(redditPost));
+            postToUpdate.setVote(redditPost.getVote());
+        }
+
         notifyDataSetChanged();
     }
 
