@@ -1,11 +1,13 @@
 package com.jacquessmuts.thresher.utilities;
 
+import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditComment;
 import com.jacquessmuts.thresher.models.RedditPost;
 
 import net.dean.jraw.models.Comment;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
+import net.dean.jraw.models.VoteDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +42,79 @@ public class JrawConversionUtils {
         return toReturn;
     }
 
-
-
     public static List<RedditPost> getRedditPosts(Listing<Submission> submissionListing){
         List<RedditPost> toReturn = new ArrayList<>();
         for (Submission submission: submissionListing){
             toReturn.add(getRedditPost(submission));
         }
         return toReturn;
+    }
+
+    /**
+     * This function takes a given VoteAction, actions the VoteAction on the redditpost/comment
+     * inside, and returns the same voteAction after doing the vote.
+     * @param voteAction
+     * @return
+     */
+    public static RedditSubmissionVotedBus.VoteAction implementVote(RedditSubmissionVotedBus.VoteAction voteAction){
+        RedditPost redditPost = voteAction.getRedditPost();
+        if (redditPost != null) {
+            switch (voteAction.getVoteDirection()) {
+                case UP:
+                    switch (redditPost.getVote()) {
+                        case UP:
+                        case NONE:
+                            redditPost.setVote(VoteDirection.UP);
+                            break;
+                        case DOWN:
+                            redditPost.setVote(VoteDirection.NONE);
+                            break;
+                    }
+                    break;
+                case DOWN:
+                    switch (redditPost.getVote()) {
+                        case UP:
+                            redditPost.setVote(VoteDirection.NONE);
+                            break;
+                        case NONE:
+                        case DOWN:
+                            redditPost.setVote(VoteDirection.DOWN);
+                            break;
+                    }
+                    break;
+            }
+            voteAction.setRedditPost(redditPost);
+        }
+
+        RedditComment redditComment = voteAction.getRedditComment();
+        if (redditComment != null){
+            switch (voteAction.getVoteDirection()) {
+                case UP:
+                    switch (redditComment.getVote()) {
+                        case UP:
+                        case NONE:
+                            redditComment.setVote(VoteDirection.UP);
+                            break;
+                        case DOWN:
+                            redditComment.setVote(VoteDirection.NONE);
+                            break;
+                    }
+                    break;
+                case DOWN:
+                    switch (redditComment.getVote()) {
+                        case UP:
+                            redditComment.setVote(VoteDirection.NONE);
+                            break;
+                        case NONE:
+                        case DOWN:
+                            redditComment.setVote(VoteDirection.DOWN);
+                            break;
+                    }
+                    break;
+            }
+            voteAction.setRedditComment(redditComment);
+        }
+
+        return voteAction;
     }
 }

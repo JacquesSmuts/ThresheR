@@ -27,7 +27,7 @@ public class RedditPostDetailActivity extends AppCompatActivity {
 
     public static final String KEY_REDDIT_POST = "reddit_post";
 
-    private String redditPostId;
+    private String redditPostId; //TODO: add IcePick and enable savedInstancedState handling
     private RedditPost redditPost;
 
     @BindView(R.id.detail_toolbar) Toolbar toolbar;
@@ -35,7 +35,6 @@ public class RedditPostDetailActivity extends AppCompatActivity {
 
     public static Intent getIntent(Context context, RedditPost redditPost){
         Intent intent = new Intent (context, RedditPostDetailActivity.class);
-        //intent.putExtra(KEY_REDDIT_POST, GenericUtils.serializeSubmission(redditPost));
         intent.putExtra(KEY_REDDIT_POST, redditPost);
         return intent;
     }
@@ -66,9 +65,6 @@ public class RedditPostDetailActivity extends AppCompatActivity {
             redditPost = intent.getParcelableExtra(KEY_REDDIT_POST);
             redditPostId = redditPost.getId();
         }
-
-
-        //TODO: add click event to voting
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -102,4 +98,5 @@ public class RedditPostDetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

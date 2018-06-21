@@ -22,7 +22,7 @@ import com.jacquessmuts.thresher.adapters.RedditPostAdapter;
 import com.jacquessmuts.thresher.database.DbHelper;
 import com.jacquessmuts.thresher.database.RedditContract;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
-import com.jacquessmuts.thresher.eventbusses.RedditPostVotedBus;
+import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.jacquessmuts.thresher.utilities.GenericUtils;
 import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
@@ -33,7 +33,6 @@ import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
-import net.dean.jraw.models.VoteDirection;
 import net.dean.jraw.pagination.DefaultPaginator;
 
 import java.util.ArrayList;
@@ -125,7 +124,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                     }
                 }));
 
-        eventDisposables.add(RedditPostVotedBus.getInstance().listen()
+        eventDisposables.add(RedditSubmissionVotedBus.getInstance().listen()
                 .observeOn(Schedulers.computation())
                 .map(voteAction -> {
                     RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
@@ -145,11 +144,13 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                     return voteAction;
                 } )
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<RedditPostVotedBus.VoteAction>() {
+                .subscribeWith(new DisposableObserver<RedditSubmissionVotedBus.VoteAction>() {
                     @Override
-                    public void onNext(RedditPostVotedBus.VoteAction voteAction) {
+                    public void onNext(RedditSubmissionVotedBus.VoteAction voteAction) {
                         Timber.d("voted on item " + voteAction.toString());
-                        handleLocalVote(voteAction);
+                        RedditPost redditPost = JrawConversionUtils.implementVote(voteAction).getRedditPost();
+                        //TODO: update database entry and refresh all from database
+                        submissionListAdapter.postUpdated(redditPost);
                     }
                     @Override
                     public void onError(Throwable e) {
@@ -163,40 +164,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     }
 
-    private void handleLocalVote(RedditPostVotedBus.VoteAction voteAction){
-        RedditPost redditPost = voteAction.getRedditPost();
 
-        if (redditPost.getVote() == null) redditPost.setVote(VoteDirection.NONE);
-
-        switch (voteAction.getVoteDirection()) {
-            case UP:
-                switch (redditPost.getVote()){
-                    case UP:
-                    case NONE:
-                        redditPost.setVote(VoteDirection.UP);
-                        break;
-                    case DOWN:
-                        redditPost.setVote(VoteDirection.NONE);
-                        break;
-                }
-                break;
-            case DOWN:
-                switch (redditPost.getVote()){
-                    case UP:
-                        redditPost.setVote(VoteDirection.NONE);
-                        break;
-                    case NONE:
-                    case DOWN:
-                        redditPost.setVote(VoteDirection.DOWN);
-                        break;
-                }
-                break;
-        }
-
-        //TODO: update database entry and refresh all from database
-
-        submissionListAdapter.postUpdated(redditPost);
-    }
 
     @NonNull
     @Override
@@ -224,7 +192,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         cursor = data;
 
-        // TODO: load data into memory using RxJava and applying filter
+        // TODO: load data into memory (using RxJava?)
     }
 
     @Override

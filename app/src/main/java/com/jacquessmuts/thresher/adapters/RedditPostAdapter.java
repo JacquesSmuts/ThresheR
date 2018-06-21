@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.activities.RedditPostListActivity;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
-import com.jacquessmuts.thresher.eventbusses.RedditPostVotedBus;
+import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.squareup.picasso.Picasso;
 
@@ -70,7 +70,16 @@ public class RedditPostAdapter
         holder.textTitle.setText(redditPost.getTitle());
         holder.textScore.setText(String.valueOf(redditPost.getScore()));
 
-        //TODO: holder.imageUpvote(redditPost.getVote()) blabla
+        holder.buttonUpvote.setVisibility(View.VISIBLE);
+        holder.buttonDownvote.setVisibility(View.VISIBLE);
+        switch (redditPost.getVote()){
+            case UP:
+                holder.buttonUpvote.setVisibility(View.INVISIBLE);
+                break;
+            case DOWN:
+                holder.buttonDownvote.setVisibility(View.INVISIBLE);
+                break;
+        }
 
         holder.itemView.setTag(redditPost);
         RedditPost finalRedditPost = redditPost;
@@ -79,13 +88,13 @@ public class RedditPostAdapter
                 RedditPostSelectedBus.getInstance().onNext(finalRedditPost));
 
         holder.buttonUpvote.setOnClickListener(v -> {
-            RedditPostVotedBus.getInstance().onNext(
-                    new RedditPostVotedBus.VoteAction(finalRedditPost, VoteDirection.UP));
+            RedditSubmissionVotedBus.getInstance().onNext(
+                    new RedditSubmissionVotedBus.VoteAction(finalRedditPost, VoteDirection.UP));
         });
 
         holder.buttonDownvote.setOnClickListener(v -> {
-            RedditPostVotedBus.getInstance().onNext(
-                    new RedditPostVotedBus.VoteAction(finalRedditPost, VoteDirection.DOWN));
+            RedditSubmissionVotedBus.getInstance().onNext(
+                    new RedditSubmissionVotedBus.VoteAction(finalRedditPost, VoteDirection.DOWN));
         });
 
     }

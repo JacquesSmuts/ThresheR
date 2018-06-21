@@ -229,6 +229,9 @@ public class RedditPost implements Parcelable {
     }
 
     public VoteDirection getVote() {
+        if (vote == null){
+            vote = VoteDirection.NONE;
+        }
         return vote;
     }
 

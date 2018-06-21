@@ -3,6 +3,8 @@ package com.jacquessmuts.thresher.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import net.dean.jraw.models.VoteDirection;
+
 import java.util.Date;
 
 /**
@@ -19,6 +21,7 @@ public class RedditComment implements Parcelable{
     String body;
     int score;
     int depth;
+    VoteDirection vote; //aka likes
 
     public RedditComment(){}
     public RedditComment(String author, String author_flair_text, Date created_utc, String body, int depth) {
@@ -85,6 +88,16 @@ public class RedditComment implements Parcelable{
         this.depth = depth;
     }
 
+    public VoteDirection getVote() {
+        if (vote == null){
+            vote = VoteDirection.NONE;
+        }
+        return vote;
+    }
+
+    public void setVote(VoteDirection vote) {
+        this.vote = vote;
+    }
 
     @Override
     public int describeContents() {
@@ -100,6 +113,7 @@ public class RedditComment implements Parcelable{
         dest.writeString(this.body);
         dest.writeInt(this.score);
         dest.writeInt(this.depth);
+        dest.writeInt(this.vote == null ? -1 : this.vote.ordinal());
     }
 
     protected RedditComment(Parcel in) {
@@ -111,6 +125,8 @@ public class RedditComment implements Parcelable{
         this.body = in.readString();
         this.score = in.readInt();
         this.depth = in.readInt();
+        int tmpVote = in.readInt();
+        this.vote = tmpVote == -1 ? null : VoteDirection.values()[tmpVote];
     }
 
     public static final Creator<RedditComment> CREATOR = new Creator<RedditComment>() {

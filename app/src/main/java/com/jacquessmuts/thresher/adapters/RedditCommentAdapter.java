@@ -11,8 +11,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
+import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditComment;
 import com.jacquessmuts.thresher.utilities.GenericUtils;
+
+import net.dean.jraw.models.VoteDirection;
 
 import java.util.List;
 
@@ -59,6 +62,17 @@ public class RedditCommentAdapter
         holder.textBody.setText(redditComment.getBody());
         holder.textScore.setText(String.valueOf(redditComment.getScore()));
 
+        holder.buttonUpvote.setVisibility(View.VISIBLE);
+        holder.buttonDownvote.setVisibility(View.VISIBLE);
+        switch (redditComment.getVote()){
+            case UP:
+                holder.buttonUpvote.setVisibility(View.INVISIBLE);
+                break;
+            case DOWN:
+                holder.buttonDownvote.setVisibility(View.INVISIBLE);
+                break;
+        }
+
         int marginLeft = (int) GenericUtils.convertDpToPixel(parentActivity, 8 * (redditComment.getDepth()-1));
         int marginOthers = (int) GenericUtils.convertDpToPixel(parentActivity, 1);;
         int marginTop = (redditComment.getDepth() > 1) ? 0 : marginOthers;
@@ -68,7 +82,16 @@ public class RedditCommentAdapter
 
         holder.itemView.setTag(redditComment);
 
-        //TODO: add click event to voting
+        RedditComment finalRedditComment = redditComment;
+        holder.buttonUpvote.setOnClickListener(v -> {
+            RedditSubmissionVotedBus.getInstance().onNext(
+                    new RedditSubmissionVotedBus.VoteAction(finalRedditComment, VoteDirection.UP));
+        });
+
+        holder.buttonDownvote.setOnClickListener(v -> {
+            RedditSubmissionVotedBus.getInstance().onNext(
+                    new RedditSubmissionVotedBus.VoteAction(finalRedditComment, VoteDirection.DOWN));
+        });
 
     }
 
@@ -83,6 +106,15 @@ public class RedditCommentAdapter
 
     public void setRedditComments(List<RedditComment> newComments){
         redditComments = newComments;
+        notifyDataSetChanged();
+    }
+
+    public void commentUpdated(RedditComment redditComment){
+        if (redditComments.contains(redditComment)){
+            RedditComment postToUpdate = redditComments.get(redditComments.indexOf(redditComment));
+            postToUpdate.setVote(redditComment.getVote());
+        }
+
         notifyDataSetChanged();
     }
 

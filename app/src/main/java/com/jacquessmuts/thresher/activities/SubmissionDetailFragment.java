@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.ThresherApp;
 import com.jacquessmuts.thresher.adapters.RedditCommentAdapter;
+import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditComment;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
 
+import net.dean.jraw.ApiException;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Comment;
 import net.dean.jraw.models.PublicContribution;
@@ -29,6 +31,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -41,10 +45,11 @@ import timber.log.Timber;
 public class SubmissionDetailFragment extends Fragment {
 
     private RedditPost redditPost;
-    private List<RedditComment> redditComments;
 
     @BindView(R.id.recyclerview_comments) RecyclerView recyclerView;
     RedditCommentAdapter commentAdapter;
+
+    public CompositeDisposable eventDisposables = new CompositeDisposable();
 
     public SubmissionDetailFragment() {
     }
@@ -90,13 +95,12 @@ public class SubmissionDetailFragment extends Fragment {
     }
 
     private void setupCommentAdapter() {
-        commentAdapter = new RedditCommentAdapter(getActivity(), redditComments);
+        commentAdapter = new RedditCommentAdapter(getActivity(), null);
         recyclerView.setAdapter(commentAdapter);
     }
 
     private void refreshCommentAdapter(List<RedditComment> comments){
-        redditComments = comments;
-        commentAdapter.setRedditComments(redditComments);
+        commentAdapter.setRedditComments(comments);
     }
 
     private void getComments(){
@@ -109,6 +113,56 @@ public class SubmissionDetailFragment extends Fragment {
                     refreshCommentAdapter(redditComments);
                     Timber.d("GetComments: Done!");
                 });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        eventDisposables.add(RedditSubmissionVotedBus.getInstance().listen()
+                .observeOn(Schedulers.computation())
+                .map(voteAction -> {
+                    RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
+                    try {
+                        switch (voteAction.getVoteDirection()) {
+                            case UP:
+                                redditClient.submission(voteAction.getRedditComment().getId()).upvote();
+                                break;
+                            case DOWN:
+                                redditClient.submission(voteAction.getRedditComment().getId()).downvote();
+                                break;
+                        }
+                    } catch (ApiException e){
+                        //TODO the JRAW client currently has this issue so upvotes sometimes don't work. Make more robust.
+                        Timber.w(e.getMessage());
+                    }
+                    return voteAction;
+                } )
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<RedditSubmissionVotedBus.VoteAction>() {
+                    @Override
+                    public void onNext(RedditSubmissionVotedBus.VoteAction voteAction) {
+                        Timber.d("voted on item " + voteAction.toString());
+
+                        RedditComment redditComment = JrawConversionUtils.implementVote(voteAction).getRedditComment();
+                        //TODO: update database entry and refresh all from database
+                        commentAdapter.commentUpdated(redditComment);
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e("error");
+                    }
+                    @Override
+                    public void onComplete() {
+                        Timber.v("complete");
+                    }
+                }));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        eventDisposables.clear();
     }
 
     private List<RedditComment> downloadComments(){
