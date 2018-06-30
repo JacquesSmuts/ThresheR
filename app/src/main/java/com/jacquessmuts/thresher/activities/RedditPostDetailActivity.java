@@ -15,6 +15,8 @@ import com.jacquessmuts.thresher.models.RedditPost;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import icepick.Icepick;
+import icepick.State;
 import timber.log.Timber;
 
 /**
@@ -27,7 +29,7 @@ public class RedditPostDetailActivity extends AppCompatActivity {
 
     public static final String KEY_REDDIT_POST = "reddit_post";
 
-    private String redditPostId; //TODO: add IcePick and enable savedInstancedState handling
+    @State String redditPostId; //TODO: add IcePick and enable savedInstancedState handling
     private RedditPost redditPost;
 
     @BindView(R.id.detail_toolbar) Toolbar toolbar;
@@ -66,15 +68,10 @@ public class RedditPostDetailActivity extends AppCompatActivity {
             redditPostId = redditPost.getId();
         }
 
+        Icepick.restoreInstanceState(this, savedInstanceState);
+
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
