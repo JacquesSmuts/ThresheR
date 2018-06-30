@@ -278,7 +278,7 @@ public class RedditProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        //TODO: implement update database
+        //TODO: implement update database if making any changes to the DB after release
         throw new RuntimeException("Update is not implemented yet");
     }
 

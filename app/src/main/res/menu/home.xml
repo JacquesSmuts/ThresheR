@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="Sort"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/menu_sort_hot"
+                android:title="Hot" />
+            <item
+                android:id="@+id/menu_sort_new"
+                android:title="New" />
+            <item
+                android:id="@+id/menu_sort_rising"
+                android:title="Rising" />
+            <item
+                android:id="@+id/menu_sort_top"
+                android:title="Top" />
+            <item
+                android:id="@+id/menu_sort_controversial"
+                android:title="Controversial" />
+        </menu>
+    </item>
 </menu>

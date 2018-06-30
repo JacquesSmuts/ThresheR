@@ -13,6 +13,9 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -24,6 +27,7 @@ import com.jacquessmuts.thresher.database.RedditContract;
 import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
 import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
+import com.jacquessmuts.thresher.models.SubmissionSort;
 import com.jacquessmuts.thresher.utilities.GenericUtils;
 import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
 
@@ -31,7 +35,6 @@ import net.dean.jraw.ApiException;
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
-import net.dean.jraw.models.SubredditSort;
 import net.dean.jraw.models.TimePeriod;
 import net.dean.jraw.pagination.DefaultPaginator;
 
@@ -40,6 +43,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import icepick.Icepick;
+import icepick.State;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -66,8 +71,6 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     private RedditPostAdapter submissionListAdapter;
 
-    //TODO: private PageFilter currentlySelectedFilter;
-
     private Cursor cursor;
 
     public CompositeDisposable eventDisposables = new CompositeDisposable();
@@ -76,10 +79,13 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     @BindView(R.id.submission_list) RecyclerView recyclerView;
     @BindView(R.id.progress_bar) ProgressBar progressBar;
 
+    @State SubmissionSort selectedSubmissionSort;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Timber.d("OnCreate Beginning");
         super.onCreate(savedInstanceState);
+        Icepick.restoreInstanceState(this, savedInstanceState);
         setContentView(R.layout.activity_submission_list);
         ButterKnife.bind(this);
 
@@ -95,6 +101,59 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
         getFrontPage();
         Timber.d("OnCreate End");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.home, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        SubmissionSort nuSubmissionSort = SubmissionSort.HOT;
+        boolean toReturn = false;
+        switch (item.getItemId()) {
+            case R.id.menu_sort_hot:
+                nuSubmissionSort = SubmissionSort.HOT;
+                toReturn = true;
+                break;
+            case R.id.menu_sort_new:
+                nuSubmissionSort = SubmissionSort.NEW;
+                toReturn = true;
+                break;
+            case R.id.menu_sort_rising:
+                nuSubmissionSort = SubmissionSort.RISING;
+                toReturn = true;
+                break;
+            case R.id.menu_sort_top:
+                nuSubmissionSort = SubmissionSort.TOP;
+                toReturn = true;
+                break;
+            case R.id.menu_sort_controversial:
+                nuSubmissionSort = SubmissionSort.CONTROVERSIAL;
+                toReturn = true;
+                break;
+            default:
+                toReturn = super.onOptionsItemSelected(item);
+                break;
+        }
+
+        if (nuSubmissionSort != selectedSubmissionSort){
+            selectedSubmissionSort = nuSubmissionSort;
+            getFrontPage();
+        }
+
+        return toReturn;
     }
 
     @Override
@@ -219,9 +278,12 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     }
 
     private List<RedditPost> downloadFrontPage(){
+
+        if (selectedSubmissionSort == null) selectedSubmissionSort = SubmissionSort.HOT;
+
         RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
         DefaultPaginator<Submission> frontPage = redditClient.frontPage()
-                .sorting(SubredditSort.TOP)
+                .sorting(selectedSubmissionSort.getSort())
                 .timePeriod(TimePeriod.DAY)
                 .limit(30)
                 .build();

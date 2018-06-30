@@ -29,7 +29,7 @@ public class RedditPostDetailActivity extends AppCompatActivity {
 
     public static final String KEY_REDDIT_POST = "reddit_post";
 
-    @State String redditPostId; //TODO: add IcePick and enable savedInstancedState handling
+    @State String redditPostId;
     private RedditPost redditPost;
 
     @BindView(R.id.detail_toolbar) Toolbar toolbar;
@@ -46,6 +46,7 @@ public class RedditPostDetailActivity extends AppCompatActivity {
         Timber.d("OnCreate Beginning");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submission_detail);
+        Icepick.restoreInstanceState(this, savedInstanceState);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -68,8 +69,6 @@ public class RedditPostDetailActivity extends AppCompatActivity {
             redditPostId = redditPost.getId();
         }
 
-        Icepick.restoreInstanceState(this, savedInstanceState);
-
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         if (savedInstanceState == null) {
@@ -84,6 +83,12 @@ public class RedditPostDetailActivity extends AppCompatActivity {
                     .commit();
         }
         Timber.d("OnCreate Done");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
     }
 
     @Override
