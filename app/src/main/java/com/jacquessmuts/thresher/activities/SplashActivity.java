@@ -57,7 +57,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void goToMainActivity(){
         startActivity(new Intent(this, RedditPostListActivity.class));
-        //startActivity(new Intent (this, RedditPostListActivity.class));
+        this.finish();
     }
 
     private static class ReauthenticationTask extends AsyncTask<String, Void, Void> {

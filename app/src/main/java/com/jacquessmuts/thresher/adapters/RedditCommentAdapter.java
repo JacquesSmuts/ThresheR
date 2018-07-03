@@ -48,7 +48,7 @@ public class RedditCommentAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Timber.d("OnBindViewHolder " + position);
+        Timber.v("OnBindViewHolder " + position);
         RedditComment redditComment = null;
 
         if (redditComments != null && redditComments.size() >= position) {

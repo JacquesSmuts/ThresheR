@@ -49,7 +49,7 @@ public class RedditPostAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Timber.d("OnBindViewHolder " + position);
+        Timber.v("OnBindViewHolder " + position);
         RedditPost redditPost = null;
 
         if (redditPosts != null && redditPosts.size() >= position) {

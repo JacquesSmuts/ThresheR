@@ -28,6 +28,7 @@ import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
 import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.jacquessmuts.thresher.models.SubmissionSort;
+import com.jacquessmuts.thresher.utilities.CursorUtils;
 import com.jacquessmuts.thresher.utilities.GenericUtils;
 import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
 
@@ -46,8 +47,11 @@ import butterknife.ButterKnife;
 import icepick.Icepick;
 import icepick.State;
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
@@ -71,9 +75,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     private RedditPostAdapter submissionListAdapter;
 
-    private Cursor cursor;
-
-    public CompositeDisposable eventDisposables = new CompositeDisposable();
+    private CompositeDisposable eventDisposables = new CompositeDisposable();
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.submission_list) RecyclerView recyclerView;
@@ -249,9 +251,28 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        cursor = data;
+        Timber.d("onLoadFinished");
 
-        // TODO: load data into memory (using RxJava?)
+        //go over the cursor and load all results into memory. This can take a few milliseconds if there are a lot of results
+        Single.fromCallable(() -> CursorUtils.redditPostsFromCursor(data))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<RedditPost>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(List<RedditPost> redditPosts) {
+                        Timber.d("RedditPosts loaded from cursor");
+                        updatePage(redditPosts);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        //TODO: handle errors
+                    }
+                });
     }
 
     @Override
@@ -272,7 +293,6 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((redditPosts) -> {
                     insertDBValues(redditPosts);
-                    updatePage(redditPosts);
                     setLoading(false);
                 });
     }

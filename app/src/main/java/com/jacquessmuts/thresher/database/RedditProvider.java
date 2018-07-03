@@ -95,7 +95,10 @@ public class RedditProvider extends ContentProvider {
                 int rowsInserted = 0;
                 try {
                     for (ContentValues value : values) {
-                        long _id = db.insert(RedditContract.RedditPostsEntry.TABLE_NAME, null, value);
+                        long _id = db.insertWithOnConflict(RedditContract.RedditPostsEntry.TABLE_NAME,
+                                null,
+                                value,
+                                SQLiteDatabase.CONFLICT_REPLACE);
                         if (_id != -1) {
                             rowsInserted++;
                         }
