@@ -1,6 +1,5 @@
 package com.jacquessmuts.thresher.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +31,19 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+
+    private void goToMainActivity(){
+        Intent intent = new Intent(this, RedditPostListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // The user could have pressed the back button before authorizing our app, make sure we have
         // an authenticated user before starting the UserOverviewActivity.
@@ -55,11 +67,6 @@ public class SplashActivity extends AppCompatActivity {
         startActivityForResult(new Intent(this, NewUserActivity.class), REQ_CODE_LOGIN);
     }
 
-    private void goToMainActivity(){
-        startActivity(new Intent(this, RedditPostListActivity.class));
-        this.finish();
-    }
-
     private static class ReauthenticationTask extends AsyncTask<String, Void, Void> {
         private final WeakReference<SplashActivity> activity;
 
@@ -75,11 +82,10 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Activity activity = this.activity.get();
+            SplashActivity activity = this.activity.get();
 
             if (activity != null) {
-                activity.startActivity(new Intent(activity, RedditPostListActivity.class));
-                //activity.startActivity(new Intent(activity, UserOverviewActivity.class));
+                activity.goToMainActivity();
             }
         }
     }
