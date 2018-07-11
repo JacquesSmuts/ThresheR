@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.ThresherApp;
@@ -47,6 +48,7 @@ public class SubmissionDetailFragment extends Fragment {
     private RedditPost redditPost;
 
     @BindView(R.id.recyclerview_comments) RecyclerView recyclerView;
+    @BindView(R.id.progressBar) ProgressBar progressBar;
     RedditCommentAdapter commentAdapter;
 
     public CompositeDisposable eventDisposables = new CompositeDisposable();
@@ -92,27 +94,6 @@ public class SubmissionDetailFragment extends Fragment {
         setupCommentAdapter();
         Timber.d("OnCreateView Done");
         return rootView;
-    }
-
-    private void setupCommentAdapter() {
-        commentAdapter = new RedditCommentAdapter(getActivity(), null);
-        recyclerView.setAdapter(commentAdapter);
-    }
-
-    private void refreshCommentAdapter(List<RedditComment> comments){
-        commentAdapter.setRedditComments(comments);
-    }
-
-    private void getComments(){
-        if (redditPost == null || redditPost.getId() == null) return;
-
-        Observable.fromCallable(this::downloadComments)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((redditComments) -> {
-                    refreshCommentAdapter(redditComments);
-                    Timber.d("GetComments: Done!");
-                });
     }
 
     @Override
@@ -162,6 +143,37 @@ public class SubmissionDetailFragment extends Fragment {
     public void onPause() {
         super.onPause();
         eventDisposables.clear();
+    }
+
+    private void setupCommentAdapter() {
+        commentAdapter = new RedditCommentAdapter(getActivity(), null);
+        recyclerView.setAdapter(commentAdapter);
+    }
+
+    private void refreshCommentAdapter(List<RedditComment> comments){
+        commentAdapter.setRedditComments(comments);
+        hideProgress();
+    }
+
+    private void getComments(){
+        if (redditPost == null || redditPost.getId() == null) return;
+        if (progressBar != null) showProgress();
+
+        Observable.fromCallable(this::downloadComments)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((redditComments) -> {
+                    refreshCommentAdapter(redditComments);
+                    Timber.d("GetComments: Done!");
+                });
+    }
+
+    private void showProgress(){
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgress(){
+        progressBar.setVisibility(View.GONE);
     }
 
     private List<RedditComment> downloadComments(){

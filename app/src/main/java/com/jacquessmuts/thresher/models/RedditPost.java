@@ -20,6 +20,8 @@ public class RedditPost implements Parcelable {
     String author;
     @UnixTime Date created_utc;
     @UnixTime Date edited;
+    long local_time_created;
+    long local_time_modified;
     String domain;
 //    EmbeddedMedia embeddedMedia;
     String id;
@@ -66,6 +68,29 @@ public class RedditPost implements Parcelable {
 
     public void setCreated_utc(Date created_utc) {
         this.created_utc = created_utc;
+    }
+
+    public long getLocal_time_created() {
+        if (local_time_created < 1){
+            local_time_created = System.currentTimeMillis();
+        }
+
+        return local_time_created;
+    }
+
+    public void setLocal_time_created(long local_time_created) {
+        this.local_time_created = local_time_created;
+    }
+
+    public long getLocal_time_modified() {
+        if (local_time_modified < 1){
+            local_time_modified = System.currentTimeMillis();
+        }
+        return local_time_modified;
+    }
+
+    public void setLocal_time_modified(long local_time_modified) {
+        this.local_time_modified = local_time_modified;
     }
 
     public Date getEdited() {
@@ -257,6 +282,8 @@ public class RedditPost implements Parcelable {
         dest.writeString(this.author);
         dest.writeLong(this.created_utc != null ? this.created_utc.getTime() : -1);
         dest.writeLong(this.edited != null ? this.edited.getTime() : -1);
+        dest.writeLong(this.local_time_created);
+        dest.writeLong(this.local_time_modified);
         dest.writeString(this.domain);
         dest.writeString(this.id);
         dest.writeString(this.name);
@@ -290,6 +317,8 @@ public class RedditPost implements Parcelable {
         this.created_utc = tmpCreated_utc == -1 ? null : new Date(tmpCreated_utc);
         long tmpEdited = in.readLong();
         this.edited = tmpEdited == -1 ? null : new Date(tmpEdited);
+        this.local_time_created = in.readLong();
+        this.local_time_modified = in.readLong();
         this.domain = in.readString();
         this.id = in.readString();
         this.name = in.readString();

@@ -40,6 +40,8 @@ public class RedditContract {
         public static final String COLUMN_FULLNAME = "fullname";
         public static final String COLUMN_VOTE = "vote";
         public static final String COLUMN_NSFW = "adult";
+        public static final String COLUMN_TIME_CREATED = "time_created";
+        public static final String COLUMN_TIME_MODIFIED = "time_modified";
 
         public static String getAllSubmissions() {
             return RedditPostsEntry.COLUMN_REDDIT_POST_ID + " NOT NULL";//" >= 0";
