@@ -145,7 +145,6 @@ public class SubmissionDetailFragment extends Fragment {
                         Timber.d("voted on item " + voteAction.toString());
 
                         RedditComment redditComment = JrawConversionUtils.implementVote(voteAction).getRedditComment();
-                        //TODO: update database entry and refresh all from database
                         commentAdapter.commentUpdated(redditComment);
                     }
                     @Override

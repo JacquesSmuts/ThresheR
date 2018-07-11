@@ -26,19 +26,16 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String[] MAIN_SUBMISSIONS_PROJECTION = {
             RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID,
             RedditContract.RedditPostsEntry.COLUMN_TITLE,
-            RedditContract.RedditPostsEntry.COLUMN_SCORE,
             RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL,
-            RedditContract.RedditPostsEntry.COLUMN_IS_FAVORITE,
-            RedditContract.RedditPostsEntry.COLUMN_VOTE_AVERAGE
+            RedditContract.RedditPostsEntry.COLUMN_SCORE,
+            RedditContract.RedditPostsEntry.COLUMN_AUTHOR,
+            RedditContract.RedditPostsEntry.COLUMN_PERMALINK,
+            RedditContract.RedditPostsEntry.COLUMN_SELF_TEXT,
+            RedditContract.RedditPostsEntry.COLUMN_FULLNAME,
+            RedditContract.RedditPostsEntry.COLUMN_VOTE,
+            RedditContract.RedditPostsEntry.COLUMN_NSFW
     };
 
-
-    public static final int INDEX_SUBMISSION_ID = 0;
-    public static final int INDEX_TITLE = 1;
-    public static final int INDEX_SCORE = 2;
-    public static final int INDEX_THUMBNAIL_PATH = 3;
-    public static final int INDEX_OVERVIEW = 4;
-    public static final int INDEX_IS_FAVORITE = 5;
 
     DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -71,21 +68,18 @@ public class DbHelper extends SQLiteOpenHelper {
                         RedditContract.RedditPostsEntry.COLUMN_TITLE   + " TEXT, " +
                         RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL + " TEXT," +
                         RedditContract.RedditPostsEntry.COLUMN_SCORE + " TEXT, " +
-                        RedditContract.RedditPostsEntry.COLUMN_RELEASE_DATE    + " TEXT," +
-                        RedditContract.RedditPostsEntry.COLUMN_POPULARITY + " TEXT," +
-                        RedditContract.RedditPostsEntry.COLUMN_VOTE_AVERAGE   + " DOUBLE, " +
-//                RedditContract.RedditPostsEntry.COLUMN_ADULT + " BOOL, "                    +
-//                RedditContract.RedditPostsEntry.COLUMN_VOTE_COUNT    + " INTEGER," +
-//                RedditContract.RedditPostsEntry.COLUMN_TRAILERS + " REAL NOT NULL,"                  +
-//                RedditContract.RedditPostsEntry.COLUMN_REVIEWS   + " REAL NOT NULL, "                    +
-                        RedditContract.RedditPostsEntry.COLUMN_IS_FAVORITE    + " BOOLEAN);";
+                        RedditContract.RedditPostsEntry.COLUMN_AUTHOR   + " TEXT, " +
+                        RedditContract.RedditPostsEntry.COLUMN_PERMALINK   + " TEXT, " +
+                        RedditContract.RedditPostsEntry.COLUMN_SELF_TEXT   + " TEXT, " +
+                        RedditContract.RedditPostsEntry.COLUMN_FULLNAME   + " TEXT, " +
+                        RedditContract.RedditPostsEntry.COLUMN_VOTE   + " INTEGER, " +
+                        RedditContract.RedditPostsEntry.COLUMN_NSFW    + " BOOLEAN);";
 
         /*
          * After we've spelled out our SQLite table creation statement above, we actually execute
          * that SQL with the execSQL method of our SQLite database object.
          */
         sqLiteDatabase.execSQL(SQL_CREATE_SUBMISSION_TABLE);
-
     }
 
     /**

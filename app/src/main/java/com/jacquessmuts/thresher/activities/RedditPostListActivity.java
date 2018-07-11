@@ -1,7 +1,5 @@
 package com.jacquessmuts.thresher.activities;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +26,7 @@ import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
 import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.jacquessmuts.thresher.models.SubmissionSort;
-import com.jacquessmuts.thresher.utilities.CursorUtils;
+import com.jacquessmuts.thresher.utilities.DbUtils;
 import com.jacquessmuts.thresher.utilities.GenericUtils;
 import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
 
@@ -39,7 +37,6 @@ import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.TimePeriod;
 import net.dean.jraw.pagination.DefaultPaginator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -210,7 +207,6 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                     public void onNext(RedditSubmissionVotedBus.VoteAction voteAction) {
                         Timber.d("voted on item " + voteAction.toString());
                         RedditPost redditPost = JrawConversionUtils.implementVote(voteAction).getRedditPost();
-                        //TODO: update database entry and refresh all from database
                         submissionListAdapter.postUpdated(redditPost);
                     }
                     @Override
@@ -254,7 +250,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
         Timber.d("onLoadFinished");
 
         //go over the cursor and load all results into memory. This can take a few milliseconds if there are a lot of results
-        Single.fromCallable(() -> CursorUtils.redditPostsFromCursor(data))
+        Single.fromCallable(() -> DbUtils.redditPostsFromCursor(data))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<RedditPost>>() {
@@ -315,19 +311,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     }
 
     private void insertDBValues(List<RedditPost> redditPosts){
-        ArrayList<ContentValues> submissionsArrayList = new ArrayList<>();
-        for (RedditPost redditPost : redditPosts){
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(RedditContract.RedditPostsEntry.COLUMN_REDDIT_POST_ID, redditPost.getId());
-            contentValues.put(RedditContract.RedditPostsEntry.COLUMN_TITLE, redditPost.getTitle());
-            contentValues.put(RedditContract.RedditPostsEntry.COLUMN_THUMBNAIL, redditPost.getThumbnail());
-            contentValues.put(RedditContract.RedditPostsEntry.COLUMN_SCORE, redditPost.getScore());
-            submissionsArrayList.add(contentValues);
-        }
-        ContentResolver contentResolver = getContentResolver();
-        contentResolver.bulkInsert(RedditContract.RedditPostsEntry.CONTENT_URI,
-                submissionsArrayList.toArray(new ContentValues[submissionsArrayList.size()]));
-
+        DbUtils.insert(getContentResolver(), redditPosts);
         getSupportLoaderManager().initLoader(DbHelper.ID_SUBMISSIONS_LOADER, null, this);
     }
 
