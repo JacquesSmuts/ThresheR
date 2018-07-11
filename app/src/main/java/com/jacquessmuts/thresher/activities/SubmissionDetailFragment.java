@@ -157,7 +157,7 @@ public class SubmissionDetailFragment extends Fragment {
 
     private void getComments(){
         if (redditPost == null || redditPost.getId() == null) return;
-        if (progressBar != null) showProgress();
+        showProgress();
 
         Observable.fromCallable(this::downloadComments)
                 .subscribeOn(Schedulers.io())
@@ -169,11 +169,11 @@ public class SubmissionDetailFragment extends Fragment {
     }
 
     private void showProgress(){
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
     }
 
     private void hideProgress(){
-        progressBar.setVisibility(View.GONE);
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
     }
 
     private List<RedditComment> downloadComments(){

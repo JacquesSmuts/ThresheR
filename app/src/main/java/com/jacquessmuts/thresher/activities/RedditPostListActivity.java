@@ -68,7 +68,6 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
      * device.
      */
     private boolean isTablet;
-    public static final String LOG_TAG = RedditPostListActivity.class.getSimpleName();
 
     private RedditPostAdapter submissionListAdapter;
 
@@ -120,7 +119,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         SubmissionSort nuSubmissionSort = SubmissionSort.HOT;
-        boolean toReturn = false;
+        boolean toReturn;
         switch (item.getItemId()) {
             case R.id.menu_sort_hot:
                 nuSubmissionSort = SubmissionSort.HOT;
@@ -221,11 +220,10 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     }
 
-
-
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int loaderId, @Nullable Bundle args) {
+        Timber.v("Loader created");
         switch (loaderId) {
 
             case DbHelper.ID_SUBMISSIONS_LOADER:
@@ -247,7 +245,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        Timber.d("onLoadFinished");
+        Timber.d("Loader onLoadFinished");
 
         //go over the cursor and load all results into memory. This can take a few milliseconds if there are a lot of results
         Single.fromCallable(() -> DbUtils.redditPostsFromCursor(data))
@@ -273,7 +271,7 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        //nothing to do here?
+        Timber.d("loader has reset");
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, List<RedditPost> redditPosts) {
