@@ -26,4 +26,7 @@
     <string name="no_stored_data">There\'s nothing here ¯\\_(ツ)_/¯</string>
     <string name="new_user">New user</string>
     <string name="access_token_expired">Access token expired</string>
+    <string name="title_activity_comment">CommentActivity</string>
+    <string name="enter_comment_hint">Your comment</string>
+    <string name="username">/u/%s</string>
 </resources>

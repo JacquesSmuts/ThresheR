@@ -40,6 +40,28 @@ public class GenericUtils {
         return deserialized;
     }
 
+    public static String convertTimestampToTimeSince(long timeStamp){
+        long currentTime =  System.currentTimeMillis();
+        int differenceInSeconds = (int) (currentTime - timeStamp);
+        int differenceInMinutes = differenceInSeconds/60;
+        int differenceInHours = differenceInMinutes/60;
+        int differenceInDays = differenceInHours/24;
+
+        String toReturn = "";
+        if (differenceInSeconds < 60){
+            toReturn = differenceInSeconds + " seconds ago";
+        } else if (differenceInMinutes < 60) {
+            toReturn = differenceInMinutes + " minutes ago";
+        } else if (differenceInHours < 24) {
+            toReturn = differenceInHours + " hours ago";
+        } else {
+            toReturn = differenceInDays + " days ago";
+        }
+
+        return toReturn;
+
+    }
+
     /**
      * This method converts dp unit to equivalent pixels, depending on device density.
      *

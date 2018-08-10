@@ -33,10 +33,11 @@
         <activity
             android:name=".activities.RedditPostListActivity"
             android:label="@string/title_submission_list"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activities.UserOverviewActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.UserOverviewActivity"
             android:label="User Overview"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.RedditPostDetailActivity"
             android:label="@string/title_submission_detail"
@@ -50,7 +51,12 @@
         <provider
             android:name=".database.RedditProvider"
             android:authorities="@string/content_authority"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.CommentActivity"
+            android:label="@string/title_activity_comment"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
