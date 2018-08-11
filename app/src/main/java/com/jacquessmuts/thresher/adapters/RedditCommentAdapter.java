@@ -83,7 +83,6 @@ public class RedditCommentAdapter
 
         holder.itemView.setTag(redditComment);
 
-
         holder.itemView.setOnClickListener(v ->
                 CommentSelectedBus.getInstance().onNext(redditComments.get(position)));
 

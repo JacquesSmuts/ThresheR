@@ -20,86 +20,95 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.constraint.ConstraintLayout
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <TextView
-                android:id="@+id/textViewUserDetails"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageViewPreview"
-                app:layout_constraintEnd_toStartOf="@+id/textViewTimeStamp"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="/u/Username" />
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/textViewTimeStamp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageViewPreview"
-                app:layout_constraintEnd_toStartOf="@+id/imageViewPreview"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="5 hours ago" />
+                <TextView
+                    android:id="@+id/textViewUserDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageViewPreview"
+                    app:layout_constraintEnd_toStartOf="@+id/textViewTimeStamp"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="/u/Username" />
 
-            <ImageView
-                android:id="@+id/imageViewPreview"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@drawable/ic_menu_camera" />
+                <TextView
+                    android:id="@+id/textViewTimeStamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageViewPreview"
+                    app:layout_constraintEnd_toStartOf="@+id/imageViewPreview"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="5 hours ago" />
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="@dimen/fab_margin"
-                app:layout_constraintEnd_toEndOf="@+id/textViewComment"
-                app:layout_constraintTop_toBottomOf="@+id/textViewComment"
-                app:srcCompat="@drawable/ic_menu_send" />
+                <ImageView
+                    android:id="@+id/imageViewPreview"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@drawable/ic_menu_camera" />
 
-            <EditText
-                android:id="@+id/editText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:ems="10"
-                android:hint="@string/enter_comment_hint"
-                android:inputType="textMultiLine"
-                app:layout_constraintEnd_toEndOf="@+id/textViewComment"
-                app:layout_constraintStart_toStartOf="@+id/textViewComment"
-                app:layout_constraintTop_toBottomOf="@+id/textViewComment" />
+                <EditText
+                    android:id="@+id/editText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:ems="10"
+                    android:hint="@string/enter_comment_hint"
+                    android:inputType="textMultiLine"
+                    app:layout_constraintEnd_toEndOf="@+id/textViewComment"
+                    app:layout_constraintStart_toStartOf="@+id/textViewComment"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewComment" />
 
-            <TextView
-                android:id="@+id/textViewComment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="@+id/imageViewPreview"
-                app:layout_constraintStart_toStartOf="@+id/textViewUserDetails"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewPreview"
-                tools:text="lorem ipsum long text is lorem lorem ipsum long text is lorem lorem ipsum long text is lorem lorem ipsum long text is lorem lorem ipsum long text is lorem " />
-        </android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/textViewComment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="@+id/imageViewPreview"
+                    app:layout_constraintStart_toStartOf="@+id/textViewUserDetails"
+                    app:layout_constraintTop_toBottomOf="@+id/imageViewPreview"
+                    tools:text="lorem ipsum long text is lorem lorem ipsum long text is lorem lorem ipsum long text is lorem lorem ipsum long text is lorem lorem ipsum long text is lorem " />
 
-    </android.support.v4.widget.NestedScrollView>
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:text="@string/button_comment"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.design.widget.CoordinatorLayout>
