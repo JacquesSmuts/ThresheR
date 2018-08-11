@@ -1,6 +1,6 @@
 package com.jacquessmuts.thresher.utilities;
 
-import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
+import com.jacquessmuts.thresher.eventbusses.SubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditComment;
 import com.jacquessmuts.thresher.models.RedditPost;
 
@@ -65,7 +65,7 @@ public class JrawConversionUtils {
      * @param voteAction
      * @return
      */
-    public static RedditSubmissionVotedBus.VoteAction implementVote(RedditSubmissionVotedBus.VoteAction voteAction){
+    public static SubmissionVotedBus.VoteAction implementVote(SubmissionVotedBus.VoteAction voteAction){
         RedditPost redditPost = voteAction.getRedditPost();
         if (redditPost != null) {
             switch (voteAction.getVoteDirection()) {

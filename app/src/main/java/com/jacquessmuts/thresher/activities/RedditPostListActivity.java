@@ -22,8 +22,8 @@ import com.jacquessmuts.thresher.ThresherApp;
 import com.jacquessmuts.thresher.adapters.RedditPostAdapter;
 import com.jacquessmuts.thresher.database.DbHelper;
 import com.jacquessmuts.thresher.database.RedditContract;
-import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
-import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
+import com.jacquessmuts.thresher.eventbusses.PostSelectedBus;
+import com.jacquessmuts.thresher.eventbusses.SubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.jacquessmuts.thresher.models.SubmissionSort;
 import com.jacquessmuts.thresher.utilities.DbUtils;
@@ -164,24 +164,14 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
     protected void onResume() {
         super.onResume();
 
-        eventDisposables.add(RedditPostSelectedBus.getInstance().listen()
+        eventDisposables.add(PostSelectedBus.getInstance().listen()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<RedditPost>() {
-                    @Override
-                    public void onNext(RedditPost redditPost) {
-                        Timber.i( "clicked on item " + redditPost.toString());
-                        startActivity(RedditPostDetailActivity.getIntent(RedditPostListActivity.this, redditPost));
-                    }
-                    @Override
-                    public void onError(Throwable e) {
-                    }
+                .subscribe( redditPost -> {
+                    Timber.i( "clicked on item " + redditPost.toString());
+                    startActivity(RedditPostDetailActivity.getIntent(RedditPostListActivity.this, redditPost));
+                }, Timber::e));
 
-                    @Override
-                    public void onComplete() {
-                    }
-                }));
-
-        eventDisposables.add(RedditSubmissionVotedBus.getInstance().listen()
+        eventDisposables.add(SubmissionVotedBus.getInstance().listen()
                 .observeOn(Schedulers.computation())
                 .map(voteAction -> {
                     RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
@@ -200,23 +190,12 @@ public class RedditPostListActivity extends AppCompatActivity implements LoaderM
                     }
                     return voteAction;
                 } )
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<RedditSubmissionVotedBus.VoteAction>() {
-                    @Override
-                    public void onNext(RedditSubmissionVotedBus.VoteAction voteAction) {
-                        Timber.d("voted on item " + voteAction.toString());
-                        RedditPost redditPost = JrawConversionUtils.implementVote(voteAction).getRedditPost();
-                        submissionListAdapter.postUpdated(redditPost);
-                    }
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e("error");
-                    }
-                    @Override
-                    public void onComplete() {
-                        Timber.v("complete");
-                    }
-                }));
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(voteAction -> {
+                    Timber.d("voted on item " + voteAction.toString());
+                    RedditPost redditPost = JrawConversionUtils.implementVote(voteAction).getRedditPost();
+                    submissionListAdapter.postUpdated(redditPost);
+                }, Timber::e));
 
     }
 

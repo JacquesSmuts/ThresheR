@@ -11,7 +11,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
-import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
+import com.jacquessmuts.thresher.eventbusses.CommentSelectedBus;
+import com.jacquessmuts.thresher.eventbusses.SubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditComment;
 import com.jacquessmuts.thresher.utilities.GenericUtils;
 
@@ -82,15 +83,18 @@ public class RedditCommentAdapter
 
         holder.itemView.setTag(redditComment);
 
-        RedditComment finalRedditComment = redditComment;
+
+        holder.itemView.setOnClickListener(v ->
+                CommentSelectedBus.getInstance().onNext(redditComments.get(position)));
+
         holder.buttonUpvote.setOnClickListener(v -> {
-            RedditSubmissionVotedBus.getInstance().onNext(
-                    new RedditSubmissionVotedBus.VoteAction(finalRedditComment, VoteDirection.UP));
+            SubmissionVotedBus.getInstance().onNext(
+                    new SubmissionVotedBus.VoteAction(redditComments.get(position), VoteDirection.UP));
         });
 
         holder.buttonDownvote.setOnClickListener(v -> {
-            RedditSubmissionVotedBus.getInstance().onNext(
-                    new RedditSubmissionVotedBus.VoteAction(finalRedditComment, VoteDirection.DOWN));
+            SubmissionVotedBus.getInstance().onNext(
+                    new SubmissionVotedBus.VoteAction(redditComments.get(position), VoteDirection.DOWN));
         });
 
     }

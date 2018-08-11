@@ -31,6 +31,7 @@ public class CommentActivity extends AppCompatActivity {
     @State
     String redditPostId;
     private RedditPost redditPost;
+    private RedditComment redditComment;
 
     @BindView(R.id.textViewUserDetails) TextView textViewUserDetails;
     @BindView(R.id.textViewTimeStamp) TextView textViewTimeStamp;
@@ -42,6 +43,13 @@ public class CommentActivity extends AppCompatActivity {
     public static Intent getIntent(Context context, RedditPost post){
         Intent intent = new Intent (context, CommentActivity.class);
         intent.putExtra(KEY_REDDIT_POST, post);
+        return intent;
+    }
+
+    public static Intent getIntent(Context context, RedditPost post, RedditComment comment){
+        Intent intent = new Intent (context, CommentActivity.class);
+        intent.putExtra(KEY_REDDIT_POST, post);
+        intent.putExtra(KEY_REDDIT_COMMENT, comment);
         return intent;
     }
 
@@ -58,6 +66,9 @@ public class CommentActivity extends AppCompatActivity {
         if (intent != null) {
             redditPost = intent.getParcelableExtra(KEY_REDDIT_POST);
             redditPostId = redditPost.getId();
+            if (intent.hasExtra(KEY_REDDIT_COMMENT)) {
+                redditComment = intent.getParcelableExtra(KEY_REDDIT_COMMENT);
+            }
         }
 
         populateViews();
@@ -65,11 +76,22 @@ public class CommentActivity extends AppCompatActivity {
 
     private void populateViews(){
 
-        textViewUserDetails.setText(getString(R.string.username, redditPost.getAuthor()));
-        textViewTimeStamp.setText(GenericUtils.convertTimestampToTimeSince(redditPost.getCreated_utc().getTime()));
         Picasso.with(this).load(redditPost.getThumbnail()).into(imageViewPreview);
 
-        textViewComment.setText(redditPost.getSelfText());
+        if (redditComment != null){
+            textViewUserDetails.setText(getString(R.string.username, redditComment.getAuthor()));
+            textViewTimeStamp.setText(GenericUtils.convertTimestampToTimeSince(redditComment.getCreated_utc().getTime()));
+            textViewComment.setText(redditComment.getBody());
+        } else {
+
+            textViewUserDetails.setText(getString(R.string.username, redditPost.getAuthor()));
+            textViewTimeStamp.setText(GenericUtils.convertTimestampToTimeSince(redditPost.getCreated_utc().getTime()));
+            if (redditPost.isSelfPost()) {
+                textViewComment.setText(redditPost.getSelfText());
+            }
+        }
+
+
 
         fab.setOnClickListener(v -> {
             makeComment();

@@ -40,9 +40,9 @@ public class GenericUtils {
         return deserialized;
     }
 
-    public static String convertTimestampToTimeSince(long timeStampInSeconds){
+    public static String convertTimestampToTimeSince(long timeStampInMilliSeconds){
         long currentTime =  System.currentTimeMillis();
-        int differenceInSeconds = (int) (currentTime - timeStampInSeconds);
+        int differenceInSeconds = (int) ((currentTime - timeStampInMilliSeconds)/1000);
         int differenceInMinutes = differenceInSeconds/60;
         int differenceInHours = differenceInMinutes/60;
         int differenceInDays = differenceInHours/24;

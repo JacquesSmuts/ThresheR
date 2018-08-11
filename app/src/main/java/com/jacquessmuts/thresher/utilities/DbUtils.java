@@ -46,7 +46,8 @@ public class DbUtils {
             redditPost.setSubredditFullName(getStringFromColumn(cursor, RedditContract.RedditPostsEntry.COLUMN_FULLNAME));
             redditPost.setVote(VoteDirection.values()[getIntFromColumn(cursor, RedditContract.RedditPostsEntry.COLUMN_VOTE)]);
             redditPost.setNsfw(getBooleanFromColumn(cursor, RedditContract.RedditPostsEntry.COLUMN_NSFW));
-            redditPost.setCreated_utc(new Date(getIntFromColumn(cursor, RedditContract.RedditPostsEntry.COLUMN_TIME_CREATED)));
+            long unixMilliseconds = getIntFromColumn(cursor, RedditContract.RedditPostsEntry.COLUMN_TIME_CREATED)*1000;
+            redditPost.setCreated_utc(new Date(unixMilliseconds));
 
             redditPosts.add(redditPost);
         }
@@ -67,7 +68,8 @@ public class DbUtils {
             contentValues.put(RedditContract.RedditPostsEntry.COLUMN_FULLNAME, redditPost.getSubredditFullName());
             contentValues.put(RedditContract.RedditPostsEntry.COLUMN_VOTE, redditPost.getVote().ordinal());
             contentValues.put(RedditContract.RedditPostsEntry.COLUMN_NSFW, redditPost.isNsfw());
-            contentValues.put(RedditContract.RedditPostsEntry.COLUMN_TIME_CREATED, redditPost.getCreated_utc().getTime());
+            contentValues.put(RedditContract.RedditPostsEntry.COLUMN_TIME_CREATED, redditPost.getCreated_utc().getTime()/1000);
+            long unixSeconds = redditPost.getCreated_utc().getTime()/1000;
             submissionsArrayList.add(contentValues);
         }
         contentResolver.bulkInsert(RedditContract.RedditPostsEntry.CONTENT_URI,

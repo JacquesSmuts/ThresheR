@@ -4,19 +4,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.jacquessmuts.thresher.R;
+import com.jacquessmuts.thresher.eventbusses.CommentSelectedBus;
+import com.jacquessmuts.thresher.models.RedditComment;
 import com.jacquessmuts.thresher.models.RedditPost;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import icepick.Icepick;
 import icepick.State;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
 import timber.log.Timber;
 
 /**
@@ -34,6 +38,8 @@ public class RedditPostDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.detail_toolbar) Toolbar toolbar;
     @BindView(R.id.fab) FloatingActionButton fab;
+
+    private CompositeDisposable eventDisposables = new CompositeDisposable();
 
     public static Intent getIntent(Context context, RedditPost redditPost){
         Intent intent = new Intent (context, RedditPostDetailActivity.class);
@@ -98,6 +104,23 @@ public class RedditPostDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        eventDisposables.clear();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        eventDisposables.add(CommentSelectedBus.getInstance().listen()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(redditComment -> {
+                    startActivity(CommentActivity.getIntent(RedditPostDetailActivity.this, redditPost, redditComment));
+                }, Timber::e));
     }
 
 }

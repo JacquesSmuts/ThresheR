@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.activities.RedditPostListActivity;
-import com.jacquessmuts.thresher.eventbusses.RedditPostSelectedBus;
-import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
+import com.jacquessmuts.thresher.eventbusses.PostSelectedBus;
+import com.jacquessmuts.thresher.eventbusses.SubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.squareup.picasso.Picasso;
 
@@ -82,19 +82,18 @@ public class RedditPostAdapter
         }
 
         holder.itemView.setTag(redditPost);
-        RedditPost finalRedditPost = redditPost;
 
         holder.itemView.setOnClickListener(v ->
-                RedditPostSelectedBus.getInstance().onNext(finalRedditPost));
+                PostSelectedBus.getInstance().onNext(redditPosts.get(position)));
 
         holder.buttonUpvote.setOnClickListener(v -> {
-            RedditSubmissionVotedBus.getInstance().onNext(
-                    new RedditSubmissionVotedBus.VoteAction(finalRedditPost, VoteDirection.UP));
+            SubmissionVotedBus.getInstance().onNext(
+                    new SubmissionVotedBus.VoteAction(redditPosts.get(position), VoteDirection.UP));
         });
 
         holder.buttonDownvote.setOnClickListener(v -> {
-            RedditSubmissionVotedBus.getInstance().onNext(
-                    new RedditSubmissionVotedBus.VoteAction(finalRedditPost, VoteDirection.DOWN));
+            SubmissionVotedBus.getInstance().onNext(
+                    new SubmissionVotedBus.VoteAction(redditPosts.get(position), VoteDirection.DOWN));
         });
 
     }

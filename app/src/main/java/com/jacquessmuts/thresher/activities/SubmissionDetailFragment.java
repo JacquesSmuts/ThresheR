@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.ThresherApp;
 import com.jacquessmuts.thresher.adapters.RedditCommentAdapter;
-import com.jacquessmuts.thresher.eventbusses.RedditSubmissionVotedBus;
+import com.jacquessmuts.thresher.eventbusses.SubmissionVotedBus;
 import com.jacquessmuts.thresher.models.RedditComment;
 import com.jacquessmuts.thresher.models.RedditPost;
 import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
@@ -100,7 +100,7 @@ public class SubmissionDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        eventDisposables.add(RedditSubmissionVotedBus.getInstance().listen()
+        eventDisposables.add(SubmissionVotedBus.getInstance().listen()
                 .observeOn(Schedulers.computation())
                 .map(voteAction -> {
                     RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
@@ -120,9 +120,9 @@ public class SubmissionDetailFragment extends Fragment {
                     return voteAction;
                 } )
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<RedditSubmissionVotedBus.VoteAction>() {
+                .subscribeWith(new DisposableObserver<SubmissionVotedBus.VoteAction>() {
                     @Override
-                    public void onNext(RedditSubmissionVotedBus.VoteAction voteAction) {
+                    public void onNext(SubmissionVotedBus.VoteAction voteAction) {
                         Timber.d("voted on item " + voteAction.toString());
 
                         RedditComment redditComment = JrawConversionUtils.implementVote(voteAction).getRedditComment();

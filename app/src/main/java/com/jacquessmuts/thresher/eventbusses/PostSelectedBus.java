@@ -9,15 +9,15 @@ import io.reactivex.subjects.PublishSubject;
  * Created by Jacques Smuts on 5/16/2018.
  *  This bus is used by RxJava to communicate a submission has been clicked/selected
  */
-public class RedditPostSelectedBus {
+public class PostSelectedBus {
 
-    private static RedditPostSelectedBus instance;
+    private static PostSelectedBus instance;
 
     private PublishSubject<RedditPost> subject = PublishSubject.create();
 
-    public static RedditPostSelectedBus getInstance() {
+    public static PostSelectedBus getInstance() {
         if (instance == null) {
-            instance = new RedditPostSelectedBus();
+            instance = new PostSelectedBus();
         }
 
         return instance;
