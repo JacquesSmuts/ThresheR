@@ -33,7 +33,8 @@ public class DbHelper extends SQLiteOpenHelper {
             RedditContract.RedditPostsEntry.COLUMN_SELF_TEXT,
             RedditContract.RedditPostsEntry.COLUMN_FULLNAME,
             RedditContract.RedditPostsEntry.COLUMN_VOTE,
-            RedditContract.RedditPostsEntry.COLUMN_NSFW
+            RedditContract.RedditPostsEntry.COLUMN_NSFW,
+            RedditContract.RedditPostsEntry.COLUMN_TIME_CREATED
     };
 
 
@@ -73,6 +74,7 @@ public class DbHelper extends SQLiteOpenHelper {
                         RedditContract.RedditPostsEntry.COLUMN_SELF_TEXT   + " TEXT, " +
                         RedditContract.RedditPostsEntry.COLUMN_FULLNAME   + " TEXT, " +
                         RedditContract.RedditPostsEntry.COLUMN_VOTE   + " INTEGER, " +
+                        RedditContract.RedditPostsEntry.COLUMN_TIME_CREATED   + " INTEGER, " +
                         RedditContract.RedditPostsEntry.COLUMN_NSFW    + " BOOLEAN);";
 
         /*

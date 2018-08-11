@@ -25,6 +25,15 @@ public class JrawConversionUtils {
         toReturn.setThumbnail(submission.getThumbnail());
         toReturn.setTitle(submission.getTitle());
         toReturn.setScore(submission.getScore());
+        toReturn.setAuthor(submission.getAuthor());
+        toReturn.setCreated_utc(submission.getCreated());
+        toReturn.setSelfText(submission.getSelfText());
+        toReturn.setNsfw(submission.isNsfw());
+        toReturn.setVote(submission.getVote());
+        toReturn.setSubreddit(submission.getSubreddit());
+        toReturn.setSelfPost(submission.isSelfPost());
+        toReturn.setUrl(submission.getUrl());
+        toReturn.setSubredditFullName(submission.getSubredditFullName());
 
         return toReturn;
     }

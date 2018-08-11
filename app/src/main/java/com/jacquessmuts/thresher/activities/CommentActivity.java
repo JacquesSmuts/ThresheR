@@ -66,7 +66,7 @@ public class CommentActivity extends AppCompatActivity {
     private void populateViews(){
 
         textViewUserDetails.setText(getString(R.string.username, redditPost.getAuthor()));
-        textViewTimeStamp.setText(GenericUtils.convertTimestampToTimeSince(redditPost.getLocal_time_created()));
+        textViewTimeStamp.setText(GenericUtils.convertTimestampToTimeSince(redditPost.getCreated_utc().getTime()));
         Picasso.with(this).load(redditPost.getThumbnail()).into(imageViewPreview);
 
         textViewComment.setText(redditPost.getSelfText());

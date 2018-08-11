@@ -10,6 +10,7 @@ import com.jacquessmuts.thresher.models.RedditPost;
 import net.dean.jraw.models.VoteDirection;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +46,7 @@ public class DbUtils {
             redditPost.setSubredditFullName(getStringFromColumn(cursor, RedditContract.RedditPostsEntry.COLUMN_FULLNAME));
             redditPost.setVote(VoteDirection.values()[getIntFromColumn(cursor, RedditContract.RedditPostsEntry.COLUMN_VOTE)]);
             redditPost.setNsfw(getBooleanFromColumn(cursor, RedditContract.RedditPostsEntry.COLUMN_NSFW));
+            redditPost.setCreated_utc(new Date(getIntFromColumn(cursor, RedditContract.RedditPostsEntry.COLUMN_TIME_CREATED)));
 
             redditPosts.add(redditPost);
         }
@@ -65,6 +67,7 @@ public class DbUtils {
             contentValues.put(RedditContract.RedditPostsEntry.COLUMN_FULLNAME, redditPost.getSubredditFullName());
             contentValues.put(RedditContract.RedditPostsEntry.COLUMN_VOTE, redditPost.getVote().ordinal());
             contentValues.put(RedditContract.RedditPostsEntry.COLUMN_NSFW, redditPost.isNsfw());
+            contentValues.put(RedditContract.RedditPostsEntry.COLUMN_TIME_CREATED, redditPost.getCreated_utc().getTime());
             submissionsArrayList.add(contentValues);
         }
         contentResolver.bulkInsert(RedditContract.RedditPostsEntry.CONTENT_URI,
