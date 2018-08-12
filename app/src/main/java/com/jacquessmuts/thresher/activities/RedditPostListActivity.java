@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.jacquessmuts.thresher.R;
 import com.jacquessmuts.thresher.ThresherApp;
@@ -36,18 +37,22 @@ import com.jacquessmuts.thresher.utilities.JrawConversionUtils;
 
 import net.dean.jraw.ApiException;
 import net.dean.jraw.RedditClient;
+import net.dean.jraw.models.KarmaBySubreddit;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.TimePeriod;
 import net.dean.jraw.pagination.DefaultPaginator;
+import net.dean.jraw.references.SelfUserReference;
 
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import icepick.Icepick;
 import icepick.State;
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -81,6 +86,10 @@ public class RedditPostListActivity extends AppCompatActivity implements
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.submission_list) RecyclerView recyclerView;
     @BindView(R.id.progress_bar) ProgressBar progressBar;
+    @BindView(R.id.drawer_layout) DrawerLayout drawer;
+    @BindView(R.id.nav_view) NavigationView navigationView;
+    TextView textViewUserDetails;
+    TextView textViewUsername;
 
     @State SubmissionSort selectedSubmissionSort;
 
@@ -95,15 +104,14 @@ public class RedditPostListActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        textViewUserDetails = navigationView.getHeaderView(0).findViewById(R.id.textViewUserDetails);
+        textViewUsername = navigationView.getHeaderView(0).findViewById(R.id.textViewUsername);
 
         getSupportLoaderManager().initLoader(DbHelper.ID_SUBMISSIONS_LOADER, null, this);
 
@@ -113,6 +121,7 @@ public class RedditPostListActivity extends AppCompatActivity implements
         setupRecyclerView(recyclerView, null);
 
         getFrontPage();
+        getUserDetails();
         Timber.d("OnCreate End");
     }
 
@@ -304,10 +313,10 @@ public class RedditPostListActivity extends AppCompatActivity implements
         Observable.fromCallable(this::downloadFrontPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((redditPosts) -> {
+                .subscribe(redditPosts -> {
                     insertDBValues(redditPosts);
                     setLoading(false);
-                });
+                }, Timber::e);
     }
 
     private List<RedditPost> downloadFrontPage(){
@@ -325,6 +334,29 @@ public class RedditPostListActivity extends AppCompatActivity implements
             Timber.v(s.getTitle());
         }
         return JrawConversionUtils.getRedditPosts(submissions);
+    }
+
+    private void getUserDetails(){
+        Observable.fromCallable(this::downloadUserDetails)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::populateUserDetails, Timber::e);
+    }
+
+    private void populateUserDetails(SelfUserReference me){
+
+        textViewUsername.setText(me.getUsername());
+        //List<KarmaBySubreddit> karma = me.karma();
+        //textViewUserDetails.setText(""+ me.karma());
+    }
+
+
+    private SelfUserReference downloadUserDetails(){
+
+        if (selectedSubmissionSort == null) selectedSubmissionSort = SubmissionSort.HOT;
+
+        RedditClient redditClient = ThresherApp.getAccountHelper().getReddit();
+        return redditClient.me();
     }
 
     private void insertDBValues(List<RedditPost> redditPosts){
