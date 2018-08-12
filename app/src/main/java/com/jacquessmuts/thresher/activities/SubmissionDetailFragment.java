@@ -162,10 +162,10 @@ public class SubmissionDetailFragment extends Fragment {
         Observable.fromCallable(this::downloadComments)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((redditComments) -> {
+                .subscribe(redditComments -> {
                     refreshCommentAdapter(redditComments);
                     Timber.d("GetComments: Done!");
-                });
+                }, Timber::e);
     }
 
     private void showProgress(){

@@ -1,5 +1,6 @@
 package com.jacquessmuts.thresher.activities;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -179,6 +180,30 @@ public class RedditPostListActivity extends AppCompatActivity implements
     }
 
     @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_home) {
+            //do nothing
+        } else if (id == R.id.nav_user) {
+            startActivity(new Intent(this, UserOverviewActivity.class));
+        } else if (id == R.id.nav_settings) {
+            //startActivity(new Intent(this, SettingsActivity.class));
+        } else if (id == R.id.nav_share) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "You can download the Reddit App here: [link].");
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "Send To"));
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         eventDisposables.clear();
@@ -254,52 +279,15 @@ public class RedditPostListActivity extends AppCompatActivity implements
         Single.fromCallable(() -> DbUtils.redditPostsFromCursor(data))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<RedditPost>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                    }
-
-                    @Override
-                    public void onSuccess(List<RedditPost> redditPosts) {
-                        Timber.d("RedditPosts loaded from cursor");
-                        updatePage(redditPosts);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        //TODO: handle errors
-                    }
-                });
+                .subscribe(redditPosts -> {
+                    Timber.d("RedditPosts loaded from cursor");
+                    updatePage(redditPosts);
+                }, Timber::e);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         Timber.d("loader has reset");
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, List<RedditPost> redditPosts) {
@@ -344,7 +332,6 @@ public class RedditPostListActivity extends AppCompatActivity implements
     }
 
     private void populateUserDetails(SelfUserReference me){
-
         textViewUsername.setText(me.getUsername());
         //List<KarmaBySubreddit> karma = me.karma();
         //textViewUserDetails.setText(""+ me.karma());
